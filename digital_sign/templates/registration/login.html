@@ -1,0 +1,619 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Login | Digital Signature</title>
+
+  <!-- Browser tab icon -->
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --card: #ffffff;
+      --text: #252733;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #e92b2b;
+      --primary-dark: #c91f1f;
+      --primary-soft: rgba(233, 43, 43, 0.1);
+      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
+      --radius: 22px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #111827;
+      --card: #1f2937;
+      --text: #f9fafb;
+      --muted: #d1d5db;
+      --border: #374151;
+      --primary-soft: rgba(233, 43, 43, 0.18);
+      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(233, 43, 43, 0.12), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      transition: 0.3s ease;
+    }
+
+    .navbar {
+      height: 76px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 7%;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.25);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .theme-toggle {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .main {
+      min-height: calc(100vh - 76px);
+      display: grid;
+      grid-template-columns: 1fr 0.95fr;
+      align-items: center;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    .intro {
+      max-width: 560px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .intro h1 {
+      font-size: clamp(40px, 5vw, 62px);
+      line-height: 1.05;
+      letter-spacing: -1.7px;
+      margin-bottom: 20px;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .features {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .feature-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      flex: 0 0 26px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px;
+      width: 100%;
+      max-width: 480px;
+      justify-self: end;
+    }
+
+    .login-header {
+      margin-bottom: 28px;
+    }
+
+    .login-header h2 {
+      font-size: 32px;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+
+    .login-header p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 9px;
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 15px 16px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 800;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 6px 0 22px;
+      flex-wrap: wrap;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .remember input {
+      accent-color: var(--primary);
+    }
+
+    .forgot-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      padding: 16px 24px;
+      border-radius: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .secondary-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .secondary-link {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--bg);
+      border-radius: 13px;
+      padding: 14px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 800;
+      transition: 0.25s;
+    }
+
+    .secondary-link:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .signup-note {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .signup-note a {
+      color: var(--primary);
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .error {
+      display: none;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid rgba(233, 43, 43, 0.25);
+      padding: 13px 14px;
+      border-radius: 13px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    @media (max-width: 920px) {
+      .main {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .intro {
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      .features {
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .login-card {
+        justify-self: center;
+        max-width: 560px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .main {
+        padding: 42px 20px;
+      }
+
+      .login-card {
+        padding: 24px;
+      }
+
+      .secondary-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .intro p {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-icon">DS</div>
+      <span>Digital Signature</span>
+    </div>
+
+    <div class="nav-actions">
+      <a href="upload_pdf.html" class="nav-link">Upload PDF</a>
+      <button class="theme-toggle" id="themeToggle" type="button">☾</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="intro">
+      <div class="badge">Secure Document Platform</div>
+
+      <h1>Login to manage your signed PDFs</h1>
+
+      <p>
+        Access your digital signature workspace to upload, sign, verify, and download
+        PDF documents securely.
+      </p>
+
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <span>Generate secure PDF digital signatures using hashing and key-based signing.</span>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <span>Verify signed documents using the public key and signature value.</span>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">✓</div>
+          <span>Keep your workflow practical with upload, sign, verify, and result pages.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-card">
+      <div class="login-header">
+        <h2>Welcome back</h2>
+        <p>Enter your account details to continue to your dashboard.</p>
+      </div>
+
+      <!-- 
+        For Django later:
+        Replace action="#" with:
+        action="{% url 'login' %}"
+      -->
+      <form id="loginForm" action="#" method="POST">
+        {% csrf_token %}
+        
+    {{ form.as_p }}
+
+        <p class="error" id="errorMessage"></p>
+
+        <div class="form-group">
+          <label for="username">Username or Email</label>
+          <input
+            class="form-control"
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter username or email"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+
+          <div class="password-wrap">
+            <input
+              class="form-control"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter password"
+              autocomplete="current-password"
+              required
+            />
+
+            <button class="toggle-password" type="button" id="togglePassword">
+              Show
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="remember">
+            <input type="checkbox" name="remember_me" />
+            Remember me
+          </label>
+
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button class="btn btn-primary" type="submit">
+          Login
+        </button>
+
+        <div class="divider">or continue to tools</div>
+
+        <div class="secondary-actions">
+          <a href="upload_pdf.html" class="secondary-link">Upload PDF</a>
+          <a href="verify_pdf.html" class="secondary-link">Verify PDF</a>
+        </div>
+
+        <p class="signup-note">
+          Do not have an account?
+          <a href="#">Create account</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+
+    const loginForm = document.getElementById("loginForm");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const errorMessage = document.getElementById("errorMessage");
+    const togglePassword = document.getElementById("togglePassword");
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      html.setAttribute("data-theme", newTheme);
+      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
+      localStorage.setItem("theme", newTheme);
+    });
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      html.setAttribute("data-theme", savedTheme);
+      themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+    }
+
+    togglePassword.addEventListener("click", () => {
+      const isPassword = password.type === "password";
+
+      password.type = isPassword ? "text" : "password";
+      togglePassword.textContent = isPassword ? "Hide" : "Show";
+    });
+
+    loginForm.addEventListener("submit", (event) => {
+      const usernameValue = username.value.trim();
+      const passwordValue = password.value.trim();
+
+      if (!usernameValue) {
+        event.preventDefault();
+        showError("Please enter your username or email.");
+        return;
+      }
+
+      if (!passwordValue) {
+        event.preventDefault();
+        showError("Please enter your password.");
+        return;
+      }
+
+      if (passwordValue.length < 4) {
+        event.preventDefault();
+        showError("Password is too short.");
+        return;
+      }
+
+      showError("");
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+
+      if (message) {
+        errorMessage.classList.add("active");
+      } else {
+        errorMessage.classList.remove("active");
+      }
+    }
+  </script>
+</body>
+</html>

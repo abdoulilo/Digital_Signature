@@ -1,0 +1,738 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign PDF | Digital Signature</title>
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --card: #ffffff;
+      --text: #252733;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #e92b2b;
+      --primary-dark: #c91f1f;
+      --primary-soft: rgba(233, 43, 43, 0.1);
+      --success: #16a34a;
+      --success-soft: rgba(22, 163, 74, 0.1);
+      --nav-bg: rgba(15, 23, 42, 0.96);
+      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
+      --radius: 22px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f9fafb;
+      --muted: #d1d5db;
+      --border: #334155;
+      --primary-soft: rgba(233, 43, 43, 0.18);
+      --success-soft: rgba(22, 163, 74, 0.16);
+      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.3s ease;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 76px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 7%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      opacity: 0.92;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.35);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link,
+    .nav-btn {
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      border-radius: 10px;
+      transition: 0.25s ease;
+    }
+
+    .nav-link {
+      color: #e5e7eb;
+      padding: 11px 14px;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .nav-btn {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 12px 18px;
+      cursor: pointer;
+    }
+
+    .nav-btn-outline {
+      color: #ffffff;
+      background: transparent;
+    }
+
+    .nav-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-btn-primary {
+      border: 0;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.25);
+    }
+
+    .nav-btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 60px 24px 50px;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 34px;
+      flex-wrap: wrap;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .progress-step.done {
+      color: var(--success);
+      background: var(--success-soft);
+      border-color: rgba(22, 163, 74, 0.25);
+    }
+
+    .progress-step.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      border-color: rgba(233, 43, 43, 0.25);
+    }
+
+    .page-header {
+      max-width: 900px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(36px, 5vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -1.4px;
+      margin-bottom: 16px;
+    }
+
+    .page-header p {
+      font-size: 19px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+
+    .document-preview {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(233, 43, 43, 0.05), transparent 35%),
+        var(--bg);
+      min-height: 455px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pdf-sheet {
+      max-width: 380px;
+      min-height: 410px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 35px rgba(20, 25, 40, 0.1);
+      padding: 28px;
+    }
+
+    .pdf-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .pdf-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .pdf-name {
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+    }
+
+    .pdf-status {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    .line {
+      height: 10px;
+      background: var(--border);
+      border-radius: 999px;
+      margin-bottom: 14px;
+      opacity: 0.75;
+    }
+
+    .line.short {
+      width: 68%;
+    }
+
+    .line.medium {
+      width: 82%;
+    }
+
+    .signature-box {
+      margin-top: 42px;
+      border: 1.5px dashed var(--primary);
+      border-radius: 16px;
+      padding: 18px;
+      background: var(--primary-soft);
+    }
+
+    .signature-label {
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .signature-line {
+      min-height: 42px;
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .info-box {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      background: var(--bg);
+      margin-bottom: 20px;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .hash-value {
+      word-break: break-all;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .security-list {
+      display: grid;
+      gap: 11px;
+      margin-top: 18px;
+    }
+
+    .security-item {
+      display: flex;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .security-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--success-soft);
+      color: var(--success);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 22px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .warning-note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .warning-note strong {
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      padding: 16px 24px;
+      border-radius: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-width: 165px;
+      font-size: 15px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .document-preview {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .navbar {
+        padding: 0 18px;
+      }
+
+      .logo span {
+        display: none;
+      }
+
+      .nav-actions {
+        gap: 8px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .nav-actions .nav-link:nth-child(2) {
+        display: inline-flex;
+        font-size: 13px;
+        padding: 9px 10px;
+      }
+
+      .nav-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .theme-toggle {
+        width: 39px;
+        height: 39px;
+      }
+
+      .main {
+        padding: 42px 18px 40px;
+      }
+
+      .page-header p {
+        font-size: 17px;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .pdf-sheet {
+        min-height: 360px;
+      }
+
+      .pdf-name {
+        max-width: 210px;
+      }
+
+      .progress-step {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <a href="{% url 'upload_pdf' %}" class="logo">
+      <div class="logo-icon">DS</div>
+      <span>Digital Signature</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
+      <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+
+      {% if user.is_authenticated %}
+        <span class="nav-link">Hi, {{ user.username }}</span>
+
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button class="nav-btn nav-btn-outline" type="submit">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">Login</a>
+        <a href="{% url 'signup' %}" class="nav-btn nav-btn-primary">Sign up</a>
+      {% endif %}
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="progress-steps">
+      <div class="progress-step done">✓ Upload PDF</div>
+      <div class="progress-step active">2 Sign Document</div>
+      <div class="progress-step">3 Download Result</div>
+      <div class="progress-step">4 Verify Later</div>
+    </div>
+
+    <section class="page-header">
+      <div class="badge">SHA-256 hash generated successfully</div>
+
+      <h1>Create your digital signature</h1>
+
+      <p>
+        Your PDF has been processed and a unique document hash has been generated.
+        Continue to create a signed PDF with verification details.
+      </p>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <h2 class="section-title">Document Preview</h2>
+
+        <p class="section-subtitle">
+          Review the selected document details before generating the signed PDF.
+        </p>
+
+        <div class="document-preview">
+          <div class="pdf-sheet">
+            <div class="pdf-top">
+              <div class="pdf-icon">PDF</div>
+
+              <div>
+                <div class="pdf-name" id="previewFileName">
+                  {{ document.filename }}
+                </div>
+
+                <div class="pdf-status">
+                  Hash: {{ document.file_hash|truncatechars:32 }}
+                </div>
+              </div>
+            </div>
+
+            <div class="line medium"></div>
+            <div class="line"></div>
+            <div class="line short"></div>
+
+            <br />
+
+            <div class="line"></div>
+            <div class="line medium"></div>
+            <div class="line short"></div>
+
+            <br />
+
+            <div class="line medium"></div>
+            <div class="line"></div>
+
+            <div class="signature-box">
+              <div class="signature-label">SIGNATURE PREVIEW</div>
+
+              <div class="signature-line" id="signaturePreview">
+                Signature and verification details will be added after generation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="section-title">Generate Signed PDF</h2>
+
+        <p class="section-subtitle">
+          The system will generate a key pair, sign the document hash, and prepare a signed PDF copy for download.
+        </p>
+
+        <form id="signForm" action="{% url 'sign_pdf' document.id %}" method="POST">
+          {% csrf_token %}
+
+          <div class="info-box">
+            <strong>Generated SHA-256 Hash</strong>
+
+            <p class="hash-value">
+              {{ document.file_hash }}
+            </p>
+          </div>
+
+          <div class="security-list">
+            <div class="security-item">
+              <div class="security-icon">✓</div>
+              <span>The document hash has already been generated from the uploaded PDF.</span>
+            </div>
+
+            <div class="security-item">
+              <div class="security-icon">✓</div>
+              <span>A new key pair will be generated for this signing process.</span>
+            </div>
+
+            <div class="security-item">
+              <div class="security-icon">✓</div>
+              <span>The signed PDF will include verification data that can be checked later.</span>
+            </div>
+
+            <div class="security-item">
+              <div class="security-icon">✓</div>
+              <span>You can verify the signed document from the verification page.</span>
+            </div>
+          </div>
+
+          <div class="warning-note">
+            <span>
+              <strong>Important:</strong> This creates a signed PDF copy with hash and verification details.
+              Adobe-certified certificate signing requires a trusted digital certificate workflow.
+            </span>
+          </div>
+
+          <div class="actions">
+            <a href="{% url 'upload_pdf' %}" class="btn btn-secondary">Upload another PDF</a>
+
+            <button type="submit" class="btn btn-primary" id="signBtn">
+              Generate signed document
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+    const signForm = document.getElementById("signForm");
+    const signBtn = document.getElementById("signBtn");
+    const signaturePreview = document.getElementById("signaturePreview");
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-theme", savedTheme);
+    themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      html.setAttribute("data-theme", newTheme);
+      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
+      localStorage.setItem("theme", newTheme);
+    });
+
+    signForm.addEventListener("submit", () => {
+      signBtn.disabled = true;
+      signBtn.textContent = "Generating signed PDF...";
+      signaturePreview.textContent = "Generating signature and verification data...";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Create Account | Digital Signature</title>
+
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --card: #ffffff;
+      --text: #252733;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #e92b2b;
+      --primary-dark: #c91f1f;
+      --primary-soft: rgba(233, 43, 43, 0.1);
+      --success: #16a34a;
+      --success-soft: rgba(22, 163, 74, 0.1);
+      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
+      --radius: 22px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #111827;
+      --card: #1f2937;
+      --text: #f9fafb;
+      --muted: #d1d5db;
+      --border: #374151;
+      --primary-soft: rgba(233, 43, 43, 0.18);
+      --success-soft: rgba(22, 163, 74, 0.16);
+      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(233, 43, 43, 0.12), transparent 34%),
+        var(--bg);
+      color: var(--text);
+      transition: 0.3s ease;
+    }
+
+    .navbar {
+      height: 76px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 7%;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.25);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .theme-toggle {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .main {
+      min-height: calc(100vh - 76px);
+      display: grid;
+      grid-template-columns: 0.95fr 1fr;
+      align-items: center;
+      gap: 48px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    .signup-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .signup-header {
+      margin-bottom: 26px;
+    }
+
+    .signup-header h1 {
+      font-size: 34px;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+    }
+
+    .signup-header p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 9px;
+      font-size: 14px;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 15px 16px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-soft);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 800;
+      cursor: pointer;
+      padding: 6px;
+    }
+
+    .terms {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 4px 0 22px;
+    }
+
+    .terms input {
+      margin-top: 4px;
+      accent-color: var(--primary);
+    }
+
+    .terms a {
+      color: var(--primary);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .btn {
+      width: 100%;
+      border: 0;
+      padding: 16px 24px;
+      border-radius: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .login-note {
+      margin-top: 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .login-note a {
+      color: var(--primary);
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .intro {
+      max-width: 570px;
+      justify-self: end;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .intro h2 {
+      font-size: clamp(40px, 5vw, 62px);
+      line-height: 1.05;
+      letter-spacing: -1.7px;
+      margin-bottom: 20px;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .workflow-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-top: 26px;
+    }
+
+    .workflow-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    .workflow-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .workflow-item {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+    }
+
+    .workflow-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      flex: 0 0 32px;
+      font-weight: 900;
+    }
+
+    .workflow-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .workflow-item span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .error {
+      display: none;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid rgba(233, 43, 43, 0.25);
+      padding: 13px 14px;
+      border-radius: 13px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .success-message {
+      display: none;
+      background: var(--success-soft);
+      color: var(--success);
+      border: 1px solid rgba(22, 163, 74, 0.25);
+      padding: 13px 14px;
+      border-radius: 13px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .success-message.active {
+      display: block;
+    }
+
+    @media (max-width: 920px) {
+      .main {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .signup-card {
+        justify-self: center;
+        max-width: 620px;
+        order: 2;
+      }
+
+      .intro {
+        justify-self: center;
+        text-align: center;
+        order: 1;
+      }
+
+      .workflow-card {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .main {
+        padding: 42px 20px;
+      }
+
+      .signup-card {
+        padding: 24px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .intro p {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-icon">DS</div>
+      <span>Digital Signature</span>
+    </div>
+
+    <div class="nav-actions">
+      <a href="login.html" class="nav-link">Login</a>
+      <a href="upload_pdf.html" class="nav-link">Upload PDF</a>
+      <button class="theme-toggle" id="themeToggle" type="button">☾</button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="signup-card">
+      <div class="signup-header">
+        <h1>Create account</h1>
+        <p>
+          Register to upload, sign, verify, and manage your PDF documents securely.
+        </p>
+      </div>
+
+      <!-- 
+        For Django later:
+        Replace action="#" with:
+        action="{% url 'signup' %}"
+      -->
+      <form id="signupForm" action="#" method="POST">
+        {% csrf_token %}
+       
+    {{ form.as_p }}
+
+        <p class="error" id="errorMessage"></p>
+        <p class="success-message" id="successMessage">
+          Account details look good. Submitting...
+        </p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="firstName"
+              name="first_name"
+              placeholder="First name"
+              autocomplete="given-name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              class="form-control"
+              type="text"
+              id="lastName"
+              name="last_name"
+              placeholder="Last name"
+              autocomplete="family-name"
+              required
+            />
+          </div>
+
+          <div class="form-group full">
+            <label for="email">Email Address</label>
+            <input
+              class="form-control"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="name@example.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="form-group full">
+            <label for="username">Username</label>
+            <input
+              class="form-control"
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Choose a username"
+              autocomplete="username"
+              required
+            />
+          </div>
+
+          <div class="form-group full">
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input
+                class="form-control"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create password"
+                autocomplete="new-password"
+                required
+              />
+              <button class="toggle-password" type="button" id="togglePassword">
+                Show
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group full">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="password-wrap">
+              <input
+                class="form-control"
+                type="password"
+                id="confirmPassword"
+                name="confirm_password"
+                placeholder="Confirm password"
+                autocomplete="new-password"
+                required
+              />
+              <button class="toggle-password" type="button" id="toggleConfirmPassword">
+                Show
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <label class="terms">
+          <input type="checkbox" id="terms" name="terms" />
+          <span>
+            I agree to the <a href="#">Terms</a> and understand that uploaded documents
+            should be handled securely by the platform.
+          </span>
+        </label>
+
+        <button class="btn btn-primary" type="submit">
+          Create Account
+        </button>
+
+        <p class="login-note">
+          Already have an account?
+          <a href="login.html">Login here</a>
+        </p>
+      </form>
+    </section>
+
+    <section class="intro">
+      <div class="badge">Start Secure Signing</div>
+
+      <h2>Build your digital signature workspace</h2>
+
+      <p>
+        Create an account to manage signed files, verify documents, and keep your signing
+        workflow organized in one place.
+      </p>
+
+      <div class="workflow-card">
+        <div class="workflow-title">What you can do after signup</div>
+
+        <div class="workflow-list">
+          <div class="workflow-item">
+            <div class="workflow-number">1</div>
+            <div>
+              <strong>Upload PDF documents</strong>
+              <span>Select PDF files and prepare them for secure digital signing.</span>
+            </div>
+          </div>
+
+          <div class="workflow-item">
+            <div class="workflow-number">2</div>
+            <div>
+              <strong>Generate signatures</strong>
+              <span>Create document hashes and sign them using secure key-based logic.</span>
+            </div>
+          </div>
+
+          <div class="workflow-item">
+            <div class="workflow-number">3</div>
+            <div>
+              <strong>Verify authenticity</strong>
+              <span>Check whether a signed PDF is valid, unchanged, and trusted.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+
+    const signupForm = document.getElementById("signupForm");
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const email = document.getElementById("email");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const terms = document.getElementById("terms");
+
+    const togglePassword = document.getElementById("togglePassword");
+    const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
+    const errorMessage = document.getElementById("errorMessage");
+    const successMessage = document.getElementById("successMessage");
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      html.setAttribute("data-theme", newTheme);
+      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
+      localStorage.setItem("theme", newTheme);
+    });
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      html.setAttribute("data-theme", savedTheme);
+      themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+    }
+
+    togglePassword.addEventListener("click", () => {
+      togglePasswordVisibility(password, togglePassword);
+    });
+
+    toggleConfirmPassword.addEventListener("click", () => {
+      togglePasswordVisibility(confirmPassword, toggleConfirmPassword);
+    });
+
+    function togglePasswordVisibility(input, button) {
+      const isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+      button.textContent = isPassword ? "Hide" : "Show";
+    }
+
+    signupForm.addEventListener("submit", (event) => {
+      const firstNameValue = firstName.value.trim();
+      const lastNameValue = lastName.value.trim();
+      const emailValue = email.value.trim();
+      const usernameValue = username.value.trim();
+      const passwordValue = password.value.trim();
+      const confirmPasswordValue = confirmPassword.value.trim();
+
+      if (!firstNameValue || !lastNameValue || !emailValue || !usernameValue) {
+        event.preventDefault();
+        showError("Please complete all required account details.");
+        return;
+      }
+
+      if (usernameValue.length < 3) {
+        event.preventDefault();
+        showError("Username must be at least 3 characters.");
+        return;
+      }
+
+      if (passwordValue.length < 8) {
+        event.preventDefault();
+        showError("Password must be at least 8 characters.");
+        return;
+      }
+
+      if (passwordValue !== confirmPasswordValue) {
+        event.preventDefault();
+        showError("Passwords do not match.");
+        return;
+      }
+
+      if (!terms.checked) {
+        event.preventDefault();
+        showError("Please agree to the terms before creating your account.");
+        return;
+      }
+
+      showError("");
+      successMessage.classList.add("active");
+    });
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      successMessage.classList.remove("active");
+
+      if (message) {
+        errorMessage.classList.add("active");
+      } else {
+        errorMessage.classList.remove("active");
+      }
+    }
+  </script>
+</body>
+</html>

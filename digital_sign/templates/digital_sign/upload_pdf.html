@@ -1,0 +1,786 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload PDF | Digital Signature</title>
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --card: #ffffff;
+      --text: #252733;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #e92b2b;
+      --primary-dark: #c91f1f;
+      --primary-soft: rgba(233, 43, 43, 0.1);
+      --nav-bg: rgba(15, 23, 42, 0.96);
+      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
+      --radius: 22px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f9fafb;
+      --muted: #d1d5db;
+      --border: #334155;
+      --primary-soft: rgba(233, 43, 43, 0.18);
+      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.3s ease;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 76px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 7%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      opacity: 0.92;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.35);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-link,
+    .nav-btn {
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      border-radius: 10px;
+      transition: 0.25s ease;
+    }
+
+    .nav-link {
+      color: #e5e7eb;
+      padding: 11px 14px;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .nav-btn {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 12px 18px;
+      cursor: pointer;
+    }
+
+    .nav-btn-outline {
+      color: #ffffff;
+      background: transparent;
+    }
+
+    .nav-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-btn-primary {
+      border: 0;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.25);
+    }
+
+    .nav-btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle {
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 72px 24px 50px;
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 880px;
+      margin: 0 auto 42px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 5vw, 58px);
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      font-size: 20px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .upload-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 34px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 20px;
+      min-height: 295px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 34px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      background:
+        radial-gradient(circle at top left, var(--primary-soft), transparent 35%),
+        var(--card);
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 24px;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 22px;
+      font-size: 38px;
+      box-shadow: 0 15px 30px rgba(233, 43, 43, 0.27);
+    }
+
+    .drop-zone h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .drop-zone p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .select-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 15px 34px;
+      border-radius: 12px;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-info {
+      display: none;
+      margin-top: 22px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--bg);
+    }
+
+    .file-info.active {
+      display: block;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .file-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .file-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .file-name {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 420px;
+    }
+
+    .file-size {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .remove-btn {
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 800;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      padding: 16px 26px;
+      border-radius: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-width: 180px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .security-note {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .security-note strong {
+      color: var(--text);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 44px;
+    }
+
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(20, 25, 40, 0.04);
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .step h3 {
+      font-size: 18px;
+      margin-bottom: 9px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .error {
+      display: none;
+      margin-top: 16px;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .navbar {
+        padding: 0 18px;
+      }
+
+      .logo span {
+        display: none;
+      }
+
+      .nav-actions {
+        gap: 8px;
+      }
+
+      .nav-link {
+        display: none;
+      }
+
+      .nav-actions .nav-link:nth-child(2) {
+        display: inline-flex;
+        font-size: 13px;
+        padding: 9px 10px;
+      }
+
+      .nav-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .theme-toggle {
+        width: 39px;
+        height: 39px;
+      }
+
+      .main {
+        padding: 48px 18px 40px;
+      }
+
+      .hero p {
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .upload-card {
+        padding: 22px;
+      }
+
+      .drop-zone {
+        min-height: 250px;
+        padding: 24px;
+      }
+
+      .file-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .file-name {
+        max-width: 250px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <a href="{% url 'upload_pdf' %}" class="logo">
+      <div class="logo-icon">DS</div>
+      <span>Digital Signature</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
+      <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+
+      {% if user.is_authenticated %}
+        <span class="nav-link">Hi, {{ user.username }}</span>
+
+        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+          {% csrf_token %}
+          <button class="nav-btn nav-btn-outline" type="submit">Logout</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">Login</a>
+        <a href="{% url 'signup' %}" class="nav-btn nav-btn-primary">Sign up</a>
+      {% endif %}
+
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <section class="hero">
+      <div class="badge">Free PDF signing and verification tool</div>
+
+      <h1>Sign and verify PDF documents securely online</h1>
+
+      <p>
+        Upload a PDF, generate a SHA-256 document hash, create a digital signature,
+        and verify signed documents through one simple workflow.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#upload-area" class="btn btn-primary">Upload PDF</a>
+        <a href="{% url 'verify_pdf' %}" class="btn btn-secondary">Verify signed PDF</a>
+      </div>
+    </section>
+
+    <section class="upload-card" id="upload-area">
+      <form id="uploadForm" action="{% url 'upload_pdf' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label class="drop-zone" id="dropZone" for="pdfInput">
+          <div>
+            <div class="upload-icon">↑</div>
+
+            <h2>Upload your PDF document</h2>
+
+            <p>
+              Drag and drop your file here, or choose a PDF from your device.
+              Maximum file size: 15 MB.
+            </p>
+
+            <span class="select-btn">Choose PDF</span>
+          </div>
+        </label>
+
+        <input id="pdfInput" name="original_pdf" type="file" accept="application/pdf,.pdf" />
+
+        <p class="error" id="errorMessage"></p>
+
+        <div class="file-info" id="fileInfo">
+          <div class="file-row">
+            <div class="file-left">
+              <div class="file-icon">PDF</div>
+              <div>
+                <div class="file-name" id="fileName">document.pdf</div>
+                <div class="file-size" id="fileSize">0 MB</div>
+              </div>
+            </div>
+
+            <button class="remove-btn" id="removeFile" type="button">Remove</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="{% url 'verify_pdf' %}" class="btn btn-secondary">Verify a signed PDF</a>
+
+          <button class="btn btn-primary" id="continueBtn" type="submit" disabled>
+            Generate hash and continue
+          </button>
+        </div>
+
+        <div class="security-note">
+          <span>
+            <strong>Free tool:</strong> Upload your PDF, generate a document hash, and create a digital signature without creating an account.
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <section class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Upload PDF</h3>
+        <p>Select the PDF document you want to sign digitally.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Generate Hash</h3>
+        <p>The system creates a secure SHA-256 hash for your document.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Create Signature</h3>
+        <p>Generate a digital signature linked to the document hash.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Verify Document</h3>
+        <p>Upload a signed PDF later to check whether the document still matches its signature data.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+
+    const uploadForm = document.getElementById("uploadForm");
+    const pdfInput = document.getElementById("pdfInput");
+    const dropZone = document.getElementById("dropZone");
+    const fileInfo = document.getElementById("fileInfo");
+    const fileName = document.getElementById("fileName");
+    const fileSize = document.getElementById("fileSize");
+    const removeFile = document.getElementById("removeFile");
+    const continueBtn = document.getElementById("continueBtn");
+    const errorMessage = document.getElementById("errorMessage");
+
+    const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-theme", savedTheme);
+    themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = html.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+
+      html.setAttribute("data-theme", newTheme);
+      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
+      localStorage.setItem("theme", newTheme);
+    });
+
+    dropZone.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropZone.classList.remove("dragover");
+
+      const file = event.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    pdfInput.addEventListener("change", () => {
+      const file = pdfInput.files[0];
+      handleFile(file);
+    });
+
+    removeFile.addEventListener("click", () => {
+      pdfInput.value = "";
+      fileInfo.classList.remove("active");
+      continueBtn.disabled = true;
+      continueBtn.textContent = "Generate hash and continue";
+      showError("");
+    });
+
+    uploadForm.addEventListener("submit", () => {
+      continueBtn.disabled = true;
+      continueBtn.textContent = "Processing PDF...";
+    });
+
+    function handleFile(file) {
+      if (!file) return;
+
+      const isPdf =
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf");
+
+      if (!isPdf) {
+        resetUpload("Please upload a valid PDF file only.");
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        resetUpload("File size is too large. Maximum allowed size is 15 MB.");
+        return;
+      }
+
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      fileInfo.classList.add("active");
+      continueBtn.disabled = false;
+      continueBtn.textContent = "Generate hash and continue";
+      showError("");
+    }
+
+    function resetUpload(message) {
+      pdfInput.value = "";
+      fileInfo.classList.remove("active");
+      continueBtn.disabled = true;
+      continueBtn.textContent = "Generate hash and continue";
+      showError(message);
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+
+      if (message) {
+        errorMessage.classList.add("active");
+      } else {
+        errorMessage.classList.remove("active");
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + " B";
+
+      const kb = bytes / 1024;
+      if (kb < 1024) return kb.toFixed(1) + " KB";
+
+      const mb = kb / 1024;
+      return mb.toFixed(2) + " MB";
+    }
+  </script>
+</body>
+</html>
