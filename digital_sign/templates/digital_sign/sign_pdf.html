@@ -1,738 +1,686 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign PDF | Digital Signature</title>
-  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Digital Certificate | DocSign</title>
+  {% load static %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <style>
-    :root {
-      --bg: #f7f8fc;
-      --card: #ffffff;
-      --text: #252733;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #e92b2b;
-      --primary-dark: #c91f1f;
-      --primary-soft: rgba(233, 43, 43, 0.1);
-      --success: #16a34a;
-      --success-soft: rgba(22, 163, 74, 0.1);
-      --nav-bg: rgba(15, 23, 42, 0.96);
-      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
-      --radius: 22px;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+    :root{
+      --bg:#f5f7fb;
+      --bg-soft:#eef2ff;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --surface-3:#eef2ff;
+      --text:#0f172a;
+      --text-muted:#64748b;
+      --border:#e2e8f0;
+      --border-strong:#cbd5e1;
+      --accent:#3657e7;
+      --accent-hover:#2744bd;
+      --accent-soft:rgba(54,87,231,.10);
+      --accent-ring:rgba(54,87,231,.24);
+      --success:#0f8a62;
+      --success-soft:rgba(15,138,98,.10);
+      --warning:#b7791f;
+      --warning-soft:rgba(183,121,31,.10);
+      --nav:#07111f;
+      --shadow-sm:0 1px 2px rgba(15,23,42,.06),0 4px 12px rgba(15,23,42,.05);
+      --shadow-md:0 10px 30px rgba(15,23,42,.08);
+      --shadow-lg:0 22px 60px rgba(15,23,42,.12);
+      --radius-sm:10px;
+      --radius-md:14px;
+      --radius-lg:22px;
+      --radius-xl:28px;
     }
 
-    [data-theme="dark"] {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f9fafb;
-      --muted: #d1d5db;
-      --border: #334155;
-      --primary-soft: rgba(233, 43, 43, 0.18);
-      --success-soft: rgba(22, 163, 74, 0.16);
-      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    [data-theme="dark"]{
+      --bg:#080e1d;
+      --bg-soft:#111a35;
+      --surface:#0d1528;
+      --surface-2:#111b32;
+      --surface-3:#121f42;
+      --text:#f8fafc;
+      --text-muted:#94a3b8;
+      --border:#1e293b;
+      --border-strong:#334155;
+      --accent:#6884ff;
+      --accent-hover:#4f6bf0;
+      --accent-soft:rgba(104,132,255,.14);
+      --accent-ring:rgba(104,132,255,.30);
+      --success-soft:rgba(15,138,98,.18);
+      --warning-soft:rgba(183,121,31,.18);
+      --nav:#050914;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.24),0 4px 12px rgba(0,0,0,.22);
+      --shadow-md:0 10px 30px rgba(0,0,0,.30);
+      --shadow-lg:0 22px 60px rgba(0,0,0,.42);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      transition: 0.3s ease;
-    }
-
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      height: 76px;
-      background: var(--nav-bg);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 7%;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      color: #ffffff;
-      text-decoration: none;
-    }
-
-    .logo:hover {
-      opacity: 0.92;
-    }
-
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.35);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-link,
-    .nav-btn {
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-      border-radius: 10px;
-      transition: 0.25s ease;
-    }
-
-    .nav-link {
-      color: #e5e7eb;
-      padding: 11px 14px;
-    }
-
-    .nav-link:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-
-    .nav-btn {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 12px 18px;
-      cursor: pointer;
-    }
-
-    .nav-btn-outline {
-      color: #ffffff;
-      background: transparent;
-    }
-
-    .nav-btn-outline:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-btn-primary {
-      border: 0;
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.25);
-    }
-
-    .nav-btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .theme-toggle {
-      width: 43px;
-      height: 43px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.04);
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    .main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 60px 24px 50px;
-    }
-
-    .progress-steps {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 34px;
-      flex-wrap: wrap;
-    }
-
-    .progress-step {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .progress-step.done {
-      color: var(--success);
-      background: var(--success-soft);
-      border-color: rgba(22, 163, 74, 0.25);
-    }
-
-    .progress-step.active {
-      color: var(--primary);
-      background: var(--primary-soft);
-      border-color: rgba(233, 43, 43, 0.25);
-    }
-
-    .page-header {
-      max-width: 900px;
-      margin: 0 auto 36px;
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      padding: 9px 15px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-
-    .page-header h1 {
-      font-size: clamp(36px, 5vw, 54px);
-      line-height: 1.05;
-      letter-spacing: -1.4px;
-      margin-bottom: 16px;
-    }
-
-    .page-header p {
-      font-size: 19px;
-      line-height: 1.7;
-      color: var(--muted);
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 26px;
-      align-items: start;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 30px;
-    }
-
-    .section-title {
-      font-size: 24px;
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
-    }
-
-    .section-subtitle {
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 24px;
-      font-size: 15px;
-    }
-
-    .document-preview {
-      border: 1px solid var(--border);
-      border-radius: 18px;
+    *,*::before,*::after{box-sizing:border-box}
+    *{margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size:15px;
+      line-height:1.65;
+      color:var(--text);
       background:
-        linear-gradient(135deg, rgba(233, 43, 43, 0.05), transparent 35%),
+        radial-gradient(circle at 50% -10%,var(--bg-soft),transparent 34rem),
         var(--bg);
-      min-height: 455px;
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background .25s ease,color .25s ease;
+    }
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    svg{display:block}
+
+    .navbar{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 clamp(18px,5vw,72px);
+      background:rgba(7,17,31,.96);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+      backdrop-filter:blur(16px);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:#fff;
+      min-width:0;
+    }
+    .brand-mark{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:#fff;
+      background:linear-gradient(135deg,#4f6bf0,#2f47c5);
+      box-shadow:0 10px 24px rgba(54,87,231,.32);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .brand-name{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      line-height:1;
+    }
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .nav-link{
+      color:rgba(255,255,255,.68);
+      font-size:14px;
+      font-weight:600;
+      padding:9px 14px;
+      border-radius:10px;
+      transition:background .18s ease,color .18s ease;
+    }
+    .nav-link:hover,
+    .nav-link:focus-visible{color:#fff;background:rgba(255,255,255,.08);outline:none}
+    .nav-link.active{color:#fff;background:rgba(255,255,255,.12)}
+    .nav-separator{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 4px}
+    .nav-user{color:rgba(255,255,255,.74);font-size:14px;font-weight:600;padding:8px 10px}
+
+    .nav-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:8px 16px;
+      border:1px solid transparent;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+    }
+    .nav-button.secondary{
+      color:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.12);
+    }
+    .nav-button.secondary:hover,
+    .nav-button.secondary:focus-visible{color:#fff;background:rgba(255,255,255,.12);outline:none}
+    .nav-button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 10px 24px rgba(54,87,231,.28);
+    }
+    .nav-button.primary:hover,
+    .nav-button.primary:focus-visible{background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .theme-toggle{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      color:rgba(255,255,255,.82);
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:50%;
+      cursor:pointer;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible{color:#fff;background:rgba(255,255,255,.13);transform:translateY(-1px);outline:none}
+
+    .page{
+      width:min(1160px,100%);
+      margin:0 auto;
+      padding:56px 24px 84px;
     }
 
-    .pdf-sheet {
-      max-width: 380px;
-      min-height: 410px;
-      margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: 0 16px 35px rgba(20, 25, 40, 0.1);
-      padding: 28px;
+    .progress{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:38px;
+      flex-wrap:wrap;
+    }
+    .progress-step{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      min-height:42px;
+      padding:8px 14px;
+      color:var(--text-muted);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:999px;
+      box-shadow:var(--shadow-sm);
+      font-size:13px;
+      font-weight:800;
+    }
+    .progress-index{
+      width:24px;
+      height:24px;
+      display:grid;
+      place-items:center;
+      border-radius:999px;
+      color:var(--text-muted);
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      font-weight:700;
+    }
+    .progress-step.done{color:var(--success);background:var(--success-soft);border-color:rgba(15,138,98,.24)}
+    .progress-step.done .progress-index{color:#fff;background:var(--success);border-color:var(--success)}
+    .progress-step.active{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-ring)}
+    .progress-step.active .progress-index{color:#fff;background:var(--accent);border-color:var(--accent)}
+
+    .hero{
+      max-width:780px;
+      margin:0 auto 42px;
+      text-align:center;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 14px;
+      margin-bottom:20px;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .eyebrow-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+    .hero-title{
+      max-width:720px;
+      margin:0 auto;
+      font-size:clamp(34px,5vw,56px);
+      line-height:1.04;
+      font-weight:800;
+      letter-spacing:-.05em;
+    }
+    .hero-text{
+      max-width:690px;
+      margin:20px auto 0;
+      color:var(--text-muted);
+      font-size:17px;
+      line-height:1.75;
     }
 
-    .pdf-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 26px;
+    .layout{
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:24px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-lg);
+      padding:30px;
+    }
+    .section-title{
+      margin-bottom:6px;
+      font-size:20px;
+      line-height:1.25;
+      font-weight:800;
+      letter-spacing:-.035em;
+    }
+    .section-text{
+      margin-bottom:22px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.7;
     }
 
-    .pdf-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-size: 13px;
-      flex-shrink: 0;
+    .document-preview{
+      min-height:430px;
+      padding:26px;
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      background:
+        radial-gradient(circle at 50% 0,var(--accent-soft),transparent 58%),
+        var(--surface-2);
+    }
+    .document-sheet{
+      max-width:385px;
+      min-height:382px;
+      margin:0 auto;
+      padding:26px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:0 18px 42px rgba(15,23,42,.10);
+    }
+    .document-head{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:26px;
+    }
+    .document-icon{
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:14px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      font-weight:700;
+    }
+    .document-name{
+      max-width:260px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+    }
+    .document-hash{
+      margin-top:3px;
+      color:var(--text-muted);
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      line-height:1.5;
+      word-break:break-all;
+    }
+    .preview-line{
+      height:9px;
+      margin-bottom:12px;
+      background:var(--border);
+      border-radius:999px;
+      opacity:.82;
+    }
+    .preview-line.short{width:64%}
+    .preview-line.medium{width:82%}
+    .certificate-stamp{
+      margin-top:34px;
+      padding:16px;
+      background:var(--accent-soft);
+      border:1px dashed var(--accent);
+      border-radius:16px;
+    }
+    .stamp-heading{
+      margin-bottom:10px;
+      color:var(--accent);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .stamp-body{
+      min-height:56px;
+      padding:13px 14px;
+      color:var(--text-muted);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      font-size:13px;
+      line-height:1.55;
     }
 
-    .pdf-name {
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 260px;
+    .hash-card{
+      padding:16px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+    }
+    .hash-label{
+      display:block;
+      margin-bottom:8px;
+      color:var(--text);
+      font-size:13px;
+      font-weight:800;
+    }
+    .hash-value{
+      max-height:210px;
+      overflow:auto;
+      padding:14px 15px;
+      color:var(--text-muted);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      line-height:1.7;
+      word-break:break-all;
+      white-space:pre-wrap;
     }
 
-    .pdf-status {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 4px;
-      word-break: break-all;
+    .check-list{
+      display:grid;
+      gap:12px;
+      margin-top:22px;
+    }
+    .check-item{
+      display:flex;
+      align-items:flex-start;
+      gap:11px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+    .check-icon{
+      width:22px;
+      height:22px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      margin-top:1px;
+      color:#fff;
+      background:var(--success);
+      border-radius:999px;
+      box-shadow:0 8px 18px rgba(15,138,98,.20);
+    }
+    .check-item strong{color:var(--text);font-weight:800}
+
+    .notice{
+      margin-top:22px;
+      padding:15px 16px;
+      color:var(--text-muted);
+      background:var(--warning-soft);
+      border:1px solid rgba(183,121,31,.26);
+      border-radius:var(--radius-md);
+      font-size:14px;
+      line-height:1.65;
+    }
+    .notice strong{color:var(--text)}
+
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      min-height:48px;
+      padding:12px 22px;
+      border:1px solid transparent;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,opacity .18s ease;
+    }
+    .button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 14px 30px rgba(54,87,231,.25);
+    }
+    .button.primary:hover:not(:disabled),
+    .button.primary:focus-visible:not(:disabled){background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .button.secondary{
+      color:var(--text);
+      background:var(--surface);
+      border-color:var(--border);
+      box-shadow:var(--shadow-sm);
+    }
+    .button.secondary:hover,
+    .button.secondary:focus-visible{border-color:var(--border-strong);color:var(--accent);transform:translateY(-1px);outline:none}
+    .button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+
+    .form-actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
     }
 
-    .line {
-      height: 10px;
-      background: var(--border);
-      border-radius: 999px;
-      margin-bottom: 14px;
-      opacity: 0.75;
+    @media(max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .nav-link{display:none}
+      .nav-separator{display:none}
     }
-
-    .line.short {
-      width: 68%;
-    }
-
-    .line.medium {
-      width: 82%;
-    }
-
-    .signature-box {
-      margin-top: 42px;
-      border: 1.5px dashed var(--primary);
-      border-radius: 16px;
-      padding: 18px;
-      background: var(--primary-soft);
-    }
-
-    .signature-label {
-      color: var(--primary);
-      font-weight: 900;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .signature-line {
-      min-height: 42px;
-      background: var(--card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 10px 14px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .info-box {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      background: var(--bg);
-      margin-bottom: 20px;
-    }
-
-    .info-box strong {
-      display: block;
-      margin-bottom: 7px;
-    }
-
-    .hash-value {
-      word-break: break-all;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .security-list {
-      display: grid;
-      gap: 11px;
-      margin-top: 18px;
-    }
-
-    .security-item {
-      display: flex;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .security-icon {
-      width: 22px;
-      height: 22px;
-      background: var(--success-soft);
-      color: var(--success);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      flex: 0 0 22px;
-      font-weight: 900;
-      font-size: 13px;
-    }
-
-    .warning-note {
-      margin-top: 22px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-    }
-
-    .warning-note strong {
-      color: var(--text);
-    }
-
-    .actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 26px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border: 0;
-      padding: 16px 24px;
-      border-radius: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.25s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-width: 165px;
-      font-size: 15px;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-dark);
-    }
-
-    .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-    }
-
-    @media (max-width: 920px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .document-preview {
-        min-height: auto;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .navbar {
-        padding: 0 18px;
-      }
-
-      .logo span {
-        display: none;
-      }
-
-      .nav-actions {
-        gap: 8px;
-      }
-
-      .nav-link {
-        display: none;
-      }
-
-      .nav-actions .nav-link:nth-child(2) {
-        display: inline-flex;
-        font-size: 13px;
-        padding: 9px 10px;
-      }
-
-      .nav-btn {
-        padding: 10px 12px;
-        font-size: 13px;
-      }
-
-      .theme-toggle {
-        width: 39px;
-        height: 39px;
-      }
-
-      .main {
-        padding: 42px 18px 40px;
-      }
-
-      .page-header p {
-        font-size: 17px;
-      }
-
-      .panel {
-        padding: 22px;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .pdf-sheet {
-        min-height: 360px;
-      }
-
-      .pdf-name {
-        max-width: 210px;
-      }
-
-      .progress-step {
-        font-size: 13px;
-      }
+    @media(max-width:640px){
+      .navbar{height:auto;min-height:66px;padding:12px 16px;gap:12px}
+      .brand-name{display:none}
+      .nav-actions{gap:6px}
+      .nav-button{padding:8px 12px;font-size:13px}
+      .theme-toggle{width:36px;height:36px}
+      .page{padding:42px 16px 64px}
+      .hero-title{font-size:clamp(32px,11vw,44px)}
+      .hero-text{font-size:15.5px}
+      .panel{padding:22px;border-radius:22px}
+      .document-preview{min-height:auto;padding:18px}
+      .document-sheet{min-height:340px;padding:20px}
+      .form-actions{flex-direction:column}
+      .form-actions .button{width:100%}
+      .progress{justify-content:flex-start;overflow-x:auto;padding-bottom:4px;flex-wrap:nowrap}
+      .progress-step{flex:0 0 auto}
     }
   </style>
 </head>
-
 <body>
-  <nav class="navbar">
-    <a href="{% url 'upload_pdf' %}" class="logo">
-      <div class="logo-icon">DS</div>
-      <span>Digital Signature</span>
-    </a>
+<nav class="navbar" aria-label="Main navigation">
+  <a href="{% url 'upload_pdf' %}" class="brand" aria-label="DocSign home">
+    <span class="brand-mark" aria-hidden="true">DS</span>
+    <span class="brand-name">DocSign</span>
+  </a>
 
-    <div class="nav-actions">
-      <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
-      <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+  <div class="nav-actions">
+    <a href="{% url 'upload_pdf' %}" class="nav-link active" aria-current="page">Sign PDF</a>
+    <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+    <span class="nav-separator" aria-hidden="true"></span>
 
-      {% if user.is_authenticated %}
-        <span class="nav-link">Hi, {{ user.username }}</span>
+    {% if user.is_authenticated %}
+      <span class="nav-user">{{ user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}
+        <button class="nav-button secondary" type="submit">Log out</button>
+      </form>
+    {% else %}
+      <a href="#" class="nav-button secondary">Log in</a>
+      <a href="#" class="nav-button primary">Sign up</a>
+    {% endif %}
 
-        <form action="{% url 'logout' %}" method="post" style="display:inline;">
-          {% csrf_token %}
-          <button class="nav-btn nav-btn-outline" type="submit">Logout</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">Login</a>
-        <a href="{% url 'signup' %}" class="nav-btn nav-btn-primary">Sign up</a>
-      {% endif %}
+    <button class="theme-toggle" id="themeBtn" type="button" aria-label="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+</nav>
 
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button>
-    </div>
+<main class="page">
+  <nav class="progress" aria-label="Signing progress">
+    <div class="progress-step done"><span class="progress-index">01</span><span>Upload PDF</span></div>
+    <div class="progress-step active"><span class="progress-index">02</span><span>Create signature</span></div>
+    <div class="progress-step"><span class="progress-index">03</span><span>Download result</span></div>
+    <div class="progress-step"><span class="progress-index">04</span><span>Verify later</span></div>
   </nav>
 
-  <main class="main">
-    <div class="progress-steps">
-      <div class="progress-step done">✓ Upload PDF</div>
-      <div class="progress-step active">2 Sign Document</div>
-      <div class="progress-step">3 Download Result</div>
-      <div class="progress-step">4 Verify Later</div>
-    </div>
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Fingerprint generated</div>
+    <h1 class="hero-title" id="heroTitle">Create the document signature record</h1>
+    <p class="hero-text">Your PDF fingerprint is ready. Generate the signing keys, sign the hash, and prepare the verification certificate for the final document.</p>
+  </section>
 
-    <section class="page-header">
-      <div class="badge">SHA-256 hash generated successfully</div>
+  <section class="layout" aria-label="Create digital signature">
+    <article class="panel">
+      <h2 class="section-title">Document preview</h2>
+      <p class="section-text">Confirm the file details before creating the signature and certificate.</p>
 
-      <h1>Create your digital signature</h1>
-
-      <p>
-        Your PDF has been processed and a unique document hash has been generated.
-        Continue to create a signed PDF with verification details.
-      </p>
-    </section>
-
-    <section class="layout">
-      <div class="panel">
-        <h2 class="section-title">Document Preview</h2>
-
-        <p class="section-subtitle">
-          Review the selected document details before generating the signed PDF.
-        </p>
-
-        <div class="document-preview">
-          <div class="pdf-sheet">
-            <div class="pdf-top">
-              <div class="pdf-icon">PDF</div>
-
-              <div>
-                <div class="pdf-name" id="previewFileName">
-                  {{ document.filename }}
-                </div>
-
-                <div class="pdf-status">
-                  Hash: {{ document.file_hash|truncatechars:32 }}
-                </div>
-              </div>
+      <div class="document-preview">
+        <div class="document-sheet">
+          <div class="document-head">
+            <div class="document-icon" aria-hidden="true">PDF</div>
+            <div>
+              <div class="document-name">{{ document.filename }}</div>
+              <div class="document-hash">Hash: {{ document.file_hash|truncatechars:42 }}</div>
             </div>
+          </div>
 
-            <div class="line medium"></div>
-            <div class="line"></div>
-            <div class="line short"></div>
+          <div class="preview-line medium"></div>
+          <div class="preview-line"></div>
+          <div class="preview-line short"></div>
+          <br>
+          <div class="preview-line"></div>
+          <div class="preview-line medium"></div>
+          <div class="preview-line short"></div>
+          <br>
+          <div class="preview-line medium"></div>
+          <div class="preview-line"></div>
 
-            <br />
-
-            <div class="line"></div>
-            <div class="line medium"></div>
-            <div class="line short"></div>
-
-            <br />
-
-            <div class="line medium"></div>
-            <div class="line"></div>
-
-            <div class="signature-box">
-              <div class="signature-label">SIGNATURE PREVIEW</div>
-
-              <div class="signature-line" id="signaturePreview">
-                Signature and verification details will be added after generation.
-              </div>
-            </div>
+          <div class="certificate-stamp">
+            <div class="stamp-heading">Digital certificate</div>
+            <div class="stamp-body" id="signaturePreview">Certificate details will be generated after signing.</div>
           </div>
         </div>
       </div>
+    </article>
 
-      <div class="panel">
-        <h2 class="section-title">Generate Signed PDF</h2>
+    <article class="panel">
+      <h2 class="section-title">Generate signed output</h2>
+      <p class="section-text">DocSign will create the key pair, sign the document fingerprint, and prepare the certificate data used for verification.</p>
 
-        <p class="section-subtitle">
-          The system will generate a key pair, sign the document hash, and prepare a signed PDF copy for download.
-        </p>
+      <form id="signForm" method="POST">
+        {% csrf_token %}
 
-        <form id="signForm" action="{% url 'sign_pdf' document.id %}" method="POST">
-          {% csrf_token %}
+        <div class="hash-card">
+          <span class="hash-label">Generated SHA-256 fingerprint</span>
+          <div class="hash-value">{{ document.file_hash }}</div>
+        </div>
 
-          <div class="info-box">
-            <strong>Generated SHA-256 Hash</strong>
-
-            <p class="hash-value">
-              {{ document.file_hash }}
-            </p>
-          </div>
-
-          <div class="security-list">
-            <div class="security-item">
-              <div class="security-icon">✓</div>
-              <span>The document hash has already been generated from the uploaded PDF.</span>
-            </div>
-
-            <div class="security-item">
-              <div class="security-icon">✓</div>
-              <span>A new key pair will be generated for this signing process.</span>
-            </div>
-
-            <div class="security-item">
-              <div class="security-icon">✓</div>
-              <span>The signed PDF will include verification data that can be checked later.</span>
-            </div>
-
-            <div class="security-item">
-              <div class="security-icon">✓</div>
-              <span>You can verify the signed document from the verification page.</span>
-            </div>
-          </div>
-
-          <div class="warning-note">
-            <span>
-              <strong>Important:</strong> This creates a signed PDF copy with hash and verification details.
-              Adobe-certified certificate signing requires a trusted digital certificate workflow.
+        <div class="check-list">
+          <div class="check-item">
+            <span class="check-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5L9.25 16.75L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </span>
+            <span><strong>Fingerprint ready.</strong> The uploaded PDF has been converted into a SHA-256 hash.</span>
           </div>
 
-          <div class="actions">
-            <a href="{% url 'upload_pdf' %}" class="btn btn-secondary">Upload another PDF</a>
-
-            <button type="submit" class="btn btn-primary" id="signBtn">
-              Generate signed document
-            </button>
+          <div class="check-item">
+            <span class="check-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5L9.25 16.75L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span><strong>Session keys.</strong> A fresh RSA key pair will be generated for this signing session.</span>
           </div>
-        </form>
-      </div>
-    </section>
-  </main>
 
-  <script>
-    const html = document.documentElement;
-    const themeToggle = document.getElementById("themeToggle");
-    const signForm = document.getElementById("signForm");
-    const signBtn = document.getElementById("signBtn");
-    const signaturePreview = document.getElementById("signaturePreview");
+          <div class="check-item">
+            <span class="check-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5L9.25 16.75L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span><strong>Verification certificate.</strong> The final result will include certificate details and QR-based verification.</span>
+          </div>
 
-    const savedTheme = localStorage.getItem("theme") || "light";
-    html.setAttribute("data-theme", savedTheme);
-    themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+          <div class="check-item">
+            <span class="check-icon" aria-hidden="true">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5L9.25 16.75L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span><strong>Public validation.</strong> Recipients can verify authenticity later using the verification page.</span>
+          </div>
+        </div>
 
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "light" ? "dark" : "light";
+        <div class="notice">
+          <strong>Important:</strong> This creates a cryptographic signature record and verification certificate. It is not an Adobe-certified PDF certificate signature.
+        </div>
 
-      html.setAttribute("data-theme", newTheme);
-      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
-      localStorage.setItem("theme", newTheme);
-    });
+        <div class="form-actions">
+          <a href="{% url 'upload_pdf' %}" class="button secondary">Upload another PDF</a>
+          <button type="submit" class="button primary" id="signBtn">Generate certificate</button>
+        </div>
+      </form>
+    </article>
+  </section>
+</main>
 
-    signForm.addEventListener("submit", () => {
-      signBtn.disabled = true;
-      signBtn.textContent = "Generating signed PDF...";
-      signaturePreview.textContent = "Generating signature and verification data...";
-    });
-  </script>
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+
+  const themeIcons = {
+    light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.25 15.25C18.96 16.33 17.29 16.98 15.47 16.98C11.35 16.98 8.02 13.65 8.02 9.53C8.02 7.71 8.67 6.04 9.75 4.75C6.42 5.74 4 8.83 4 12.48C4 16.91 7.59 20.5 12.02 20.5C15.67 20.5 18.76 18.58 20.25 15.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M5.64 5.64L4.22 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19.78 19.78L18.36 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>'
+  };
+
+  function setTheme(theme){
+    root.dataset.theme = theme;
+    themeBtn.innerHTML = theme === 'light' ? themeIcons.light : themeIcons.dark;
+    themeBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    try{ localStorage.setItem('theme', theme); }catch(e){}
+  }
+
+  let savedTheme = 'light';
+  try{ savedTheme = localStorage.getItem('theme') || 'light'; }catch(e){}
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click', () => setTheme(root.dataset.theme === 'light' ? 'dark' : 'light'));
+
+  const signForm = document.getElementById('signForm');
+  const signBtn = document.getElementById('signBtn');
+  const signaturePreview = document.getElementById('signaturePreview');
+
+  signForm.addEventListener('submit', () => {
+    signBtn.disabled = true;
+    signBtn.textContent = 'Generating certificate';
+    signaturePreview.textContent = 'Creating signing keys, document signature, and verification certificate.';
+  });
+</script>
 </body>
 </html>

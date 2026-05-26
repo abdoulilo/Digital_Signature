@@ -24,6 +24,8 @@ class DigitalDocument(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='uploaded')
     verification_message = models.TextField(blank=True)
 
+    signed_at = models.DateTimeField(null=True, blank=True)
+
     uploaded_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,

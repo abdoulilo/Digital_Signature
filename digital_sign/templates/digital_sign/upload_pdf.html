@@ -1,786 +1,702 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Upload PDF | Digital Signature</title>
-  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign PDF Documents Online | DocSign</title>
+  {% load static %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <style>
-    :root {
-      --bg: #f7f8fc;
-      --card: #ffffff;
-      --text: #252733;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #e92b2b;
-      --primary-dark: #c91f1f;
-      --primary-soft: rgba(233, 43, 43, 0.1);
-      --nav-bg: rgba(15, 23, 42, 0.96);
-      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
-      --radius: 22px;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+    :root{
+      --bg:#f5f7fb;
+      --bg-soft:#eef2ff;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --surface-3:#eef2ff;
+      --text:#0f172a;
+      --text-muted:#64748b;
+      --border:#e2e8f0;
+      --border-strong:#cbd5e1;
+      --accent:#3657e7;
+      --accent-hover:#2744bd;
+      --accent-soft:rgba(54,87,231,.10);
+      --accent-ring:rgba(54,87,231,.24);
+      --success:#0f8a62;
+      --success-soft:rgba(15,138,98,.10);
+      --danger:#c24135;
+      --danger-soft:rgba(194,65,53,.10);
+      --nav:#07111f;
+      --shadow-sm:0 1px 2px rgba(15,23,42,.06),0 4px 12px rgba(15,23,42,.05);
+      --shadow-md:0 10px 30px rgba(15,23,42,.08);
+      --shadow-lg:0 22px 60px rgba(15,23,42,.12);
+      --radius-sm:10px;
+      --radius-md:14px;
+      --radius-lg:22px;
+      --radius-xl:28px;
     }
 
-    [data-theme="dark"] {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f9fafb;
-      --muted: #d1d5db;
-      --border: #334155;
-      --primary-soft: rgba(233, 43, 43, 0.18);
-      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+    [data-theme="dark"]{
+      --bg:#080e1d;
+      --bg-soft:#111a35;
+      --surface:#0d1528;
+      --surface-2:#111b32;
+      --surface-3:#121f42;
+      --text:#f8fafc;
+      --text-muted:#94a3b8;
+      --border:#1e293b;
+      --border-strong:#334155;
+      --accent:#6884ff;
+      --accent-hover:#4f6bf0;
+      --accent-soft:rgba(104,132,255,.14);
+      --accent-ring:rgba(104,132,255,.30);
+      --success-soft:rgba(15,138,98,.18);
+      --danger-soft:rgba(194,65,53,.18);
+      --nav:#050914;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.24),0 4px 12px rgba(0,0,0,.22);
+      --shadow-md:0 10px 30px rgba(0,0,0,.30);
+      --shadow-lg:0 22px 60px rgba(0,0,0,.42);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      transition: 0.3s ease;
-    }
-
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      height: 76px;
-      background: var(--nav-bg);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 7%;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      color: #ffffff;
-      text-decoration: none;
-    }
-
-    .logo:hover {
-      opacity: 0.92;
-    }
-
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.35);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-link,
-    .nav-btn {
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-      border-radius: 10px;
-      transition: 0.25s ease;
-    }
-
-    .nav-link {
-      color: #e5e7eb;
-      padding: 11px 14px;
-    }
-
-    .nav-link:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-
-    .nav-btn {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 12px 18px;
-      cursor: pointer;
-    }
-
-    .nav-btn-outline {
-      color: #ffffff;
-      background: transparent;
-    }
-
-    .nav-btn-outline:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-btn-primary {
-      border: 0;
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.25);
-    }
-
-    .nav-btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .theme-toggle {
-      width: 43px;
-      height: 43px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.04);
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    .main {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 72px 24px 50px;
-    }
-
-    .hero {
-      text-align: center;
-      max-width: 880px;
-      margin: 0 auto 42px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      padding: 9px 15px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 14px;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 5vw, 58px);
-      line-height: 1.05;
-      letter-spacing: -1.5px;
-      margin-bottom: 18px;
-    }
-
-    .hero p {
-      font-size: 20px;
-      line-height: 1.7;
-      color: var(--muted);
-    }
-
-    .hero-actions {
-      margin-top: 28px;
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .upload-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 34px;
-      max-width: 780px;
-      margin: 0 auto;
-    }
-
-    .drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: 20px;
-      min-height: 295px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 34px;
-      cursor: pointer;
-      transition: 0.25s ease;
+    *,*::before,*::after{box-sizing:border-box}
+    *{margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size:15px;
+      line-height:1.65;
+      color:var(--text);
       background:
-        radial-gradient(circle at top left, var(--primary-soft), transparent 35%),
-        var(--card);
+        radial-gradient(circle at 50% -10%,var(--bg-soft),transparent 34rem),
+        var(--bg);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background .25s ease,color .25s ease;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input{font:inherit}
+    svg{display:block}
+
+    .navbar{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 clamp(18px,5vw,72px);
+      background:rgba(7,17,31,.96);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+      backdrop-filter:blur(16px);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:#fff;
+      min-width:0;
+    }
+    .brand-mark{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:#fff;
+      background:linear-gradient(135deg,#4f6bf0,#2f47c5);
+      box-shadow:0 10px 24px rgba(54,87,231,.32);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .brand-name{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      line-height:1;
+    }
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .nav-link{
+      color:rgba(255,255,255,.68);
+      font-size:14px;
+      font-weight:600;
+      padding:9px 14px;
+      border-radius:10px;
+      transition:background .18s ease,color .18s ease;
+    }
+    .nav-link:hover,
+    .nav-link:focus-visible{color:#fff;background:rgba(255,255,255,.08);outline:none}
+    .nav-link.active{color:#fff;background:rgba(255,255,255,.12)}
+    .nav-separator{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 4px}
+    .nav-user{color:rgba(255,255,255,.74);font-size:14px;font-weight:600;padding:8px 10px}
+
+    .nav-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:8px 16px;
+      border:1px solid transparent;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+    }
+    .nav-button.secondary{
+      color:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.12);
+    }
+    .nav-button.secondary:hover,
+    .nav-button.secondary:focus-visible{color:#fff;background:rgba(255,255,255,.12);outline:none}
+    .nav-button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 10px 24px rgba(54,87,231,.28);
+    }
+    .nav-button.primary:hover,
+    .nav-button.primary:focus-visible{background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .theme-toggle{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      color:rgba(255,255,255,.82);
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:50%;
+      cursor:pointer;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible{color:#fff;background:rgba(255,255,255,.13);transform:translateY(-1px);outline:none}
+
+    .page{
+      width:min(1120px,100%);
+      margin:0 auto;
+      padding:72px 24px 84px;
+    }
+    .hero{
+      max-width:760px;
+      margin:0 auto 42px;
+      text-align:center;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 14px;
+      margin-bottom:20px;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .eyebrow-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+    .hero-title{
+      max-width:720px;
+      margin:0 auto;
+      font-size:clamp(38px,6vw,64px);
+      line-height:1.02;
+      font-weight:800;
+      letter-spacing:-.055em;
+    }
+    .hero-text{
+      max-width:660px;
+      margin:22px auto 0;
+      color:var(--text-muted);
+      font-size:17px;
+      line-height:1.75;
+    }
+    .hero-actions{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:30px;
     }
 
-    .drop-zone:hover,
-    .drop-zone.dragover {
-      border-color: var(--primary);
-      background: var(--primary-soft);
-      transform: translateY(-2px);
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      min-height:48px;
+      padding:12px 22px;
+      border:1px solid transparent;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,opacity .18s ease;
     }
-
-    .upload-icon {
-      width: 88px;
-      height: 88px;
-      border-radius: 24px;
-      background: var(--primary);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 22px;
-      font-size: 38px;
-      box-shadow: 0 15px 30px rgba(233, 43, 43, 0.27);
+    .button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 14px 30px rgba(54,87,231,.25);
     }
-
-    .drop-zone h2 {
-      font-size: 28px;
-      margin-bottom: 12px;
+    .button.primary:hover:not(:disabled),
+    .button.primary:focus-visible:not(:disabled){background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .button.secondary{
+      color:var(--text);
+      background:var(--surface);
+      border-color:var(--border);
+      box-shadow:var(--shadow-sm);
     }
+    .button.secondary:hover,
+    .button.secondary:focus-visible{border-color:var(--border-strong);color:var(--accent);transform:translateY(-1px);outline:none}
+    .button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 
-    .drop-zone p {
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 22px;
+    .upload-card{
+      max-width:760px;
+      margin:0 auto;
+      padding:32px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-lg);
     }
-
-    .select-btn {
-      display: inline-block;
-      background: var(--primary);
-      color: #fff;
-      padding: 15px 34px;
-      border-radius: 12px;
-      font-weight: 800;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    .dropzone{
+      position:relative;
+      min-height:246px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:38px 24px;
+      text-align:center;
+      cursor:pointer;
+      border:2px dashed var(--border-strong);
+      border-radius:var(--radius-lg);
+      background:
+        radial-gradient(circle at 50% 0,var(--accent-soft),transparent 62%),
+        var(--surface-2);
+      transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
     }
-
-    input[type="file"] {
-      display: none;
+    .dropzone:hover,
+    .dropzone.over{
+      border-color:var(--accent);
+      background:var(--surface-3);
+      box-shadow:0 0 0 4px var(--accent-soft);
+      transform:translateY(-1px);
     }
-
-    .file-info {
-      display: none;
-      margin-top: 22px;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      background: var(--bg);
+    #pdfInput{
+      position:absolute;
+      width:1px;
+      height:1px;
+      opacity:0;
+      overflow:hidden;
+      clip-path:inset(50%);
+      pointer-events:none;
     }
-
-    .file-info.active {
-      display: block;
+    .dropzone-content{max-width:440px}
+    .dropzone-icon{
+      width:64px;
+      height:64px;
+      display:grid;
+      place-items:center;
+      margin:0 auto 18px;
+      color:#fff;
+      background:linear-gradient(135deg,#4f6bf0,#2f47c5);
+      border-radius:20px;
+      box-shadow:0 14px 28px rgba(54,87,231,.24);
     }
-
-    .file-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
+    .dropzone-title{
+      margin-bottom:8px;
+      font-size:22px;
+      line-height:1.2;
+      font-weight:800;
+      letter-spacing:-.03em;
     }
-
-    .file-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
+    .dropzone-hint{
+      margin-bottom:18px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.7;
     }
-
-    .file-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      flex-shrink: 0;
+    .file-select-label{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
+      padding:10px 18px;
+      color:#fff;
+      background:var(--accent);
+      border-radius:12px;
+      font-size:14px;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(54,87,231,.22);
+      pointer-events:none;
     }
-
-    .file-name {
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 420px;
+    .field-error{
+      display:none;
+      margin-top:12px;
+      color:var(--danger);
+      font-size:14px;
+      font-weight:700;
     }
+    .field-error.show{display:block}
 
-    .file-size {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 5px;
+    .file-chip{
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-top:16px;
+      padding:14px 16px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
     }
-
-    .remove-btn {
-      border: 0;
-      background: transparent;
-      color: var(--primary);
-      font-weight: 800;
-      cursor: pointer;
-      padding: 8px;
+    .file-chip.show{display:flex}
+    .file-meta{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
     }
-
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      margin-top: 24px;
-      flex-wrap: wrap;
+    .file-badge{
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:12px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.02em;
     }
-
-    .btn {
-      border: 0;
-      padding: 16px 26px;
-      border-radius: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.25s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-width: 180px;
+    .file-name{
+      max-width:430px;
+      overflow:hidden;
+      color:var(--text);
+      font-size:14px;
+      font-weight:800;
+      text-overflow:ellipsis;
+      white-space:nowrap;
     }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
+    .file-size{margin-top:1px;color:var(--text-muted);font-size:13px}
+    .remove-file{
+      border:0;
+      background:transparent;
+      color:var(--danger);
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:background .18s ease;
     }
+    .remove-file:hover,
+    .remove-file:focus-visible{background:var(--danger-soft);outline:none}
 
-    .btn-secondary:hover {
-      background: var(--bg);
+    .form-actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:22px;
     }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      color:var(--text-muted);
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      font-size:14px;
+      line-height:1.65;
     }
+    .note strong{color:var(--text)}
 
-    .btn-primary:hover:not(:disabled) {
-      background: var(--primary-dark);
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+      margin-top:48px;
     }
-
-    .btn-primary:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      box-shadow: none;
+    .step{
+      padding:22px 20px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
     }
-
-    .btn:hover:not(:disabled) {
-      transform: translateY(-1px);
+    .step:hover{transform:translateY(-2px);border-color:var(--border-strong);box-shadow:var(--shadow-md)}
+    .step-number{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      margin-bottom:14px;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:11px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:12px;
+      font-weight:700;
     }
-
-    .security-note {
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
+    .step-title{
+      margin-bottom:7px;
+      font-size:15px;
+      line-height:1.3;
+      font-weight:800;
+      letter-spacing:-.02em;
     }
+    .step-text{color:var(--text-muted);font-size:13px;line-height:1.65}
 
-    .security-note strong {
-      color: var(--text);
+    @media(max-width:900px){
+      .steps{grid-template-columns:repeat(2,1fr)}
+      .nav-link{display:none}
+      .nav-separator{display:none}
     }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-top: 44px;
-    }
-
-    .step {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 10px 25px rgba(20, 25, 40, 0.04);
-    }
-
-    .step-number {
-      width: 36px;
-      height: 36px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      margin-bottom: 14px;
-    }
-
-    .step h3 {
-      font-size: 18px;
-      margin-bottom: 9px;
-    }
-
-    .step p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .error {
-      display: none;
-      margin-top: 16px;
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .error.active {
-      display: block;
-    }
-
-    @media (max-width: 900px) {
-      .steps {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 760px) {
-      .navbar {
-        padding: 0 18px;
-      }
-
-      .logo span {
-        display: none;
-      }
-
-      .nav-actions {
-        gap: 8px;
-      }
-
-      .nav-link {
-        display: none;
-      }
-
-      .nav-actions .nav-link:nth-child(2) {
-        display: inline-flex;
-        font-size: 13px;
-        padding: 9px 10px;
-      }
-
-      .nav-btn {
-        padding: 10px 12px;
-        font-size: 13px;
-      }
-
-      .theme-toggle {
-        width: 39px;
-        height: 39px;
-      }
-
-      .main {
-        padding: 48px 18px 40px;
-      }
-
-      .hero p {
-        font-size: 17px;
-      }
-
-      .hero-actions {
-        flex-direction: column;
-      }
-
-      .hero-actions .btn {
-        width: 100%;
-      }
-
-      .upload-card {
-        padding: 22px;
-      }
-
-      .drop-zone {
-        min-height: 250px;
-        padding: 24px;
-      }
-
-      .file-row {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .file-name {
-        max-width: 250px;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .steps {
-        grid-template-columns: 1fr;
-      }
+    @media(max-width:640px){
+      .navbar{height:auto;min-height:66px;padding:12px 16px;gap:12px}
+      .brand-name{display:none}
+      .nav-actions{gap:6px}
+      .nav-button{padding:8px 12px;font-size:13px}
+      .theme-toggle{width:36px;height:36px}
+      .page{padding:48px 16px 64px}
+      .hero{margin-bottom:34px}
+      .hero-title{font-size:clamp(34px,12vw,46px)}
+      .hero-text{font-size:15.5px}
+      .hero-actions,.form-actions{flex-direction:column}
+      .hero-actions .button,.form-actions .button{width:100%}
+      .upload-card{padding:22px;border-radius:22px}
+      .dropzone{min-height:224px;padding:30px 18px}
+      .file-chip{align-items:flex-start;flex-direction:column}
+      .remove-file{align-self:flex-end}
+      .steps{grid-template-columns:1fr;margin-top:34px}
     }
   </style>
 </head>
-
 <body>
-  <nav class="navbar">
-    <a href="{% url 'upload_pdf' %}" class="logo">
-      <div class="logo-icon">DS</div>
-      <span>Digital Signature</span>
-    </a>
+<nav class="navbar" aria-label="Main navigation">
+  <a href="{% url 'upload_pdf' %}" class="brand" aria-label="DocSign home">
+    <span class="brand-mark" aria-hidden="true">DS</span>
+    <span class="brand-name">DocSign</span>
+  </a>
 
-    <div class="nav-actions">
-      <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
-      <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+  <div class="nav-actions">
+    <a href="{% url 'upload_pdf' %}" class="nav-link active" aria-current="page">Sign PDF</a>
+    <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+    <span class="nav-separator" aria-hidden="true"></span>
 
-      {% if user.is_authenticated %}
-        <span class="nav-link">Hi, {{ user.username }}</span>
-
-        <form action="{% url 'logout' %}" method="post" style="display:inline;">
-          {% csrf_token %}
-          <button class="nav-btn nav-btn-outline" type="submit">Logout</button>
-        </form>
-      {% else %}
-        <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">Login</a>
-        <a href="{% url 'signup' %}" class="nav-btn nav-btn-primary">Sign up</a>
-      {% endif %}
-
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button>
-    </div>
-  </nav>
-
-  <main class="main">
-    <section class="hero">
-      <div class="badge">Free PDF signing and verification tool</div>
-
-      <h1>Sign and verify PDF documents securely online</h1>
-
-      <p>
-        Upload a PDF, generate a SHA-256 document hash, create a digital signature,
-        and verify signed documents through one simple workflow.
-      </p>
-
-      <div class="hero-actions">
-        <a href="#upload-area" class="btn btn-primary">Upload PDF</a>
-        <a href="{% url 'verify_pdf' %}" class="btn btn-secondary">Verify signed PDF</a>
-      </div>
-    </section>
-
-    <section class="upload-card" id="upload-area">
-      <form id="uploadForm" action="{% url 'upload_pdf' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <label class="drop-zone" id="dropZone" for="pdfInput">
-          <div>
-            <div class="upload-icon">↑</div>
-
-            <h2>Upload your PDF document</h2>
-
-            <p>
-              Drag and drop your file here, or choose a PDF from your device.
-              Maximum file size: 15 MB.
-            </p>
-
-            <span class="select-btn">Choose PDF</span>
-          </div>
-        </label>
-
-        <input id="pdfInput" name="original_pdf" type="file" accept="application/pdf,.pdf" />
-
-        <p class="error" id="errorMessage"></p>
-
-        <div class="file-info" id="fileInfo">
-          <div class="file-row">
-            <div class="file-left">
-              <div class="file-icon">PDF</div>
-              <div>
-                <div class="file-name" id="fileName">document.pdf</div>
-                <div class="file-size" id="fileSize">0 MB</div>
-              </div>
-            </div>
-
-            <button class="remove-btn" id="removeFile" type="button">Remove</button>
-          </div>
-        </div>
-
-        <div class="actions">
-          <a href="{% url 'verify_pdf' %}" class="btn btn-secondary">Verify a signed PDF</a>
-
-          <button class="btn btn-primary" id="continueBtn" type="submit" disabled>
-            Generate hash and continue
-          </button>
-        </div>
-
-        <div class="security-note">
-          <span>
-            <strong>Free tool:</strong> Upload your PDF, generate a document hash, and create a digital signature without creating an account.
-          </span>
-        </div>
+    {% if user.is_authenticated %}
+      <span class="nav-user">{{ user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}
+        <button class="nav-button secondary" type="submit">Log out</button>
       </form>
-    </section>
+    {% else %}
+      <a href="#" class="nav-button secondary">Log in</a>
+      <a href="#" class="nav-button primary">Sign up</a>
+    {% endif %}
 
-    <section class="steps">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h3>Upload PDF</h3>
-        <p>Select the PDF document you want to sign digitally.</p>
+    <button class="theme-toggle" id="themeBtn" type="button" aria-label="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+</nav>
+
+<main class="page">
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Free online signing</div>
+    <h1 class="hero-title" id="heroTitle">Sign and verify PDF documents online</h1>
+    <p class="hero-text">Upload a PDF, generate a SHA-256 fingerprint, and create a tamper-evident digital signature that can be verified later.</p>
+    <div class="hero-actions">
+      <a href="#upload" class="button primary">Start signing</a>
+      <a href="{% url 'verify_pdf' %}" class="button secondary">Verify a document</a>
+    </div>
+  </section>
+
+  <section id="upload" class="upload-card" aria-label="Upload PDF form">
+    <form id="uploadForm" action="{% url 'upload_pdf' %}" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <label class="dropzone" id="dropZone" for="pdfInput">
+        <span class="dropzone-content">
+          <span class="dropzone-icon" aria-hidden="true">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 15V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.5 8.5L12 4L16.5 8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5 14.5V17.5C5 18.8807 6.11929 20 7.5 20H16.5C17.8807 20 19 18.8807 19 17.5V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="dropzone-title">Upload your PDF</span>
+          <span class="dropzone-hint">Drag and drop your file here, or browse from your device. Maximum file size is 15 MB.</span>
+          <span class="file-select-label">Choose PDF file</span>
+        </span>
+      </label>
+
+      <input id="pdfInput" name="original_pdf" type="file" accept="application/pdf,.pdf">
+      <div class="field-error" id="errMsg" role="alert"></div>
+
+      <div class="file-chip" id="fileChip" aria-live="polite">
+        <div class="file-meta">
+          <div class="file-badge" aria-hidden="true">PDF</div>
+          <div>
+            <div class="file-name" id="chipName"></div>
+            <div class="file-size" id="chipSize"></div>
+          </div>
+        </div>
+        <button class="remove-file" id="removeBtn" type="button">Remove file</button>
       </div>
 
-      <div class="step">
-        <div class="step-number">2</div>
-        <h3>Generate Hash</h3>
-        <p>The system creates a secure SHA-256 hash for your document.</p>
+      <div class="form-actions">
+        <a href="{% url 'verify_pdf' %}" class="button secondary">Verify a signed PDF</a>
+        <button class="button primary" id="submitBtn" type="submit" disabled>Generate hash and continue</button>
       </div>
 
-      <div class="step">
-        <div class="step-number">3</div>
-        <h3>Create Signature</h3>
-        <p>Generate a digital signature linked to the document hash.</p>
+      <div class="note">
+        <strong>Privacy note:</strong> Your file is processed for signing and verification only. Avoid uploading documents you are not authorized to process.
       </div>
+    </form>
+  </section>
 
-      <div class="step">
-        <div class="step-number">4</div>
-        <h3>Verify Document</h3>
-        <p>Upload a signed PDF later to check whether the document still matches its signature data.</p>
-      </div>
-    </section>
-  </main>
+  <section class="steps" aria-label="How DocSign works">
+    <article class="step">
+      <div class="step-number">01</div>
+      <h2 class="step-title">Upload PDF</h2>
+      <p class="step-text">Select the document you want to prepare for signing.</p>
+    </article>
+    <article class="step">
+      <div class="step-number">02</div>
+      <h2 class="step-title">Generate fingerprint</h2>
+      <p class="step-text">The system calculates a SHA-256 fingerprint from the file bytes.</p>
+    </article>
+    <article class="step">
+      <div class="step-number">03</div>
+      <h2 class="step-title">Create signature</h2>
+      <p class="step-text">The document fingerprint is signed and stored with verification details.</p>
+    </article>
+    <article class="step">
+      <div class="step-number">04</div>
+      <h2 class="step-title">Verify later</h2>
+      <p class="step-text">Anyone with the signed file or verification details can confirm authenticity.</p>
+    </article>
+  </section>
+</main>
 
-  <script>
-    const html = document.documentElement;
-    const themeToggle = document.getElementById("themeToggle");
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
 
-    const uploadForm = document.getElementById("uploadForm");
-    const pdfInput = document.getElementById("pdfInput");
-    const dropZone = document.getElementById("dropZone");
-    const fileInfo = document.getElementById("fileInfo");
-    const fileName = document.getElementById("fileName");
-    const fileSize = document.getElementById("fileSize");
-    const removeFile = document.getElementById("removeFile");
-    const continueBtn = document.getElementById("continueBtn");
-    const errorMessage = document.getElementById("errorMessage");
+  const themeIcons = {
+    light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.25 15.25C18.96 16.33 17.29 16.98 15.47 16.98C11.35 16.98 8.02 13.65 8.02 9.53C8.02 7.71 8.67 6.04 9.75 4.75C6.42 5.74 4 8.83 4 12.48C4 16.91 7.59 20.5 12.02 20.5C15.67 20.5 18.76 18.58 20.25 15.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M5.64 5.64L4.22 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19.78 19.78L18.36 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>'
+  };
 
-    const MAX_FILE_SIZE = 15 * 1024 * 1024;
+  function setTheme(theme){
+    root.dataset.theme = theme;
+    themeBtn.innerHTML = theme === 'light' ? themeIcons.light : themeIcons.dark;
+    themeBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    try{ localStorage.setItem('theme', theme); }catch(e){}
+  }
 
-    const savedTheme = localStorage.getItem("theme") || "light";
-    html.setAttribute("data-theme", savedTheme);
-    themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+  let savedTheme = 'light';
+  try{ savedTheme = localStorage.getItem('theme') || 'light'; }catch(e){}
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click', () => setTheme(root.dataset.theme === 'light' ? 'dark' : 'light'));
 
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "light" ? "dark" : "light";
+  const input = document.getElementById('pdfInput');
+  const dropZone = document.getElementById('dropZone');
+  const chip = document.getElementById('fileChip');
+  const chipName = document.getElementById('chipName');
+  const chipSize = document.getElementById('chipSize');
+  const removeBtn = document.getElementById('removeBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errMsg');
+  const form = document.getElementById('uploadForm');
+  const MAX_FILE_SIZE = 15 * 1024 * 1024;
 
-      html.setAttribute("data-theme", newTheme);
-      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
-      localStorage.setItem("theme", newTheme);
-    });
+  dropZone.addEventListener('dragover', event => {
+    event.preventDefault();
+    dropZone.classList.add('over');
+  });
 
-    dropZone.addEventListener("dragover", (event) => {
-      event.preventDefault();
-      dropZone.classList.add("dragover");
-    });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
 
-    dropZone.addEventListener("dragleave", () => {
-      dropZone.classList.remove("dragover");
-    });
+  dropZone.addEventListener('drop', event => {
+    event.preventDefault();
+    dropZone.classList.remove('over');
+    const file = event.dataTransfer.files[0];
+    if(!file) return;
 
-    dropZone.addEventListener("drop", (event) => {
-      event.preventDefault();
-      dropZone.classList.remove("dragover");
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    input.files = dataTransfer.files;
+    handleFile(file);
+  });
 
-      const file = event.dataTransfer.files[0];
-      handleFile(file);
-    });
+  input.addEventListener('change', () => handleFile(input.files[0]));
+  removeBtn.addEventListener('click', () => clearFile(''));
 
-    pdfInput.addEventListener("change", () => {
-      const file = pdfInput.files[0];
-      handleFile(file);
-    });
+  form.addEventListener('submit', () => {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing file';
+  });
 
-    removeFile.addEventListener("click", () => {
-      pdfInput.value = "";
-      fileInfo.classList.remove("active");
-      continueBtn.disabled = true;
-      continueBtn.textContent = "Generate hash and continue";
-      showError("");
-    });
+  function handleFile(file){
+    if(!file) return;
 
-    uploadForm.addEventListener("submit", () => {
-      continueBtn.disabled = true;
-      continueBtn.textContent = "Processing PDF...";
-    });
-
-    function handleFile(file) {
-      if (!file) return;
-
-      const isPdf =
-        file.type === "application/pdf" ||
-        file.name.toLowerCase().endsWith(".pdf");
-
-      if (!isPdf) {
-        resetUpload("Please upload a valid PDF file only.");
-        return;
-      }
-
-      if (file.size > MAX_FILE_SIZE) {
-        resetUpload("File size is too large. Maximum allowed size is 15 MB.");
-        return;
-      }
-
-      fileName.textContent = file.name;
-      fileSize.textContent = formatFileSize(file.size);
-      fileInfo.classList.add("active");
-      continueBtn.disabled = false;
-      continueBtn.textContent = "Generate hash and continue";
-      showError("");
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if(!isPdf){
+      clearFile('Only PDF files are accepted.');
+      return;
     }
 
-    function resetUpload(message) {
-      pdfInput.value = "";
-      fileInfo.classList.remove("active");
-      continueBtn.disabled = true;
-      continueBtn.textContent = "Generate hash and continue";
-      showError(message);
+    if(file.size > MAX_FILE_SIZE){
+      clearFile('File exceeds the 15 MB limit.');
+      return;
     }
 
-    function showError(message) {
-      errorMessage.textContent = message;
+    chipName.textContent = file.name;
+    chipSize.textContent = formatBytes(file.size);
+    chip.classList.add('show');
+    submitBtn.disabled = false;
+    errorMsg.textContent = '';
+    errorMsg.classList.remove('show');
+  }
 
-      if (message) {
-        errorMessage.classList.add("active");
-      } else {
-        errorMessage.classList.remove("active");
-      }
+  function clearFile(message){
+    input.value = '';
+    chip.classList.remove('show');
+    submitBtn.disabled = true;
+
+    if(message){
+      errorMsg.textContent = message;
+      errorMsg.classList.add('show');
+    }else{
+      errorMsg.textContent = '';
+      errorMsg.classList.remove('show');
     }
+  }
 
-    function formatFileSize(bytes) {
-      if (bytes < 1024) return bytes + " B";
-
-      const kb = bytes / 1024;
-      if (kb < 1024) return kb.toFixed(1) + " KB";
-
-      const mb = kb / 1024;
-      return mb.toFixed(2) + " MB";
-    }
-  </script>
+  function formatBytes(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+</script>
 </body>
 </html>

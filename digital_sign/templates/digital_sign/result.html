@@ -1,1001 +1,810 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Result | Digital Signature</title>
-  <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signing Result | DocSign</title>
+  {% load static %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <style>
-    :root {
-      --bg: #f7f8fc;
-      --card: #ffffff;
-      --text: #252733;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #e92b2b;
-      --primary-dark: #c91f1f;
-      --primary-soft: rgba(233, 43, 43, 0.1);
-      --success: #16a34a;
-      --success-soft: rgba(22, 163, 74, 0.1);
-      --warning: #f59e0b;
-      --warning-soft: rgba(245, 158, 11, 0.12);
-      --danger: #dc2626;
-      --danger-soft: rgba(220, 38, 38, 0.1);
-      --nav-bg: rgba(15, 23, 42, 0.96);
-      --shadow: 0 14px 35px rgba(20, 25, 40, 0.08);
-      --radius: 22px;
-    }
-
-    [data-theme="dark"] {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --text: #f9fafb;
-      --muted: #d1d5db;
-      --border: #334155;
-      --primary-soft: rgba(233, 43, 43, 0.18);
-      --success-soft: rgba(22, 163, 74, 0.16);
-      --warning-soft: rgba(245, 158, 11, 0.16);
-      --danger-soft: rgba(220, 38, 38, 0.16);
-      --shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Inter, Arial, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      transition: 0.3s ease;
-    }
-
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      height: 76px;
-      background: var(--nav-bg);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 7%;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      color: #ffffff;
-      text-decoration: none;
-    }
-
-    .logo:hover {
-      opacity: 0.92;
-    }
-
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      background: var(--primary);
-      color: #fff;
-      border-radius: 13px;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      box-shadow: 0 8px 18px rgba(233, 43, 43, 0.35);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-link,
-    .nav-btn {
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-      border-radius: 10px;
-      transition: 0.25s ease;
-    }
-
-    .nav-link {
-      color: #e5e7eb;
-      padding: 11px 14px;
-    }
-
-    .nav-link:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-
-    .nav-btn {
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 12px 18px;
-      cursor: pointer;
-    }
-
-    .nav-btn-outline {
-      color: #ffffff;
-      background: transparent;
-    }
-
-    .nav-btn-outline:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-btn-primary {
-      border: 0;
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.25);
-    }
-
-    .nav-btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .theme-toggle {
-      width: 43px;
-      height: 43px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.04);
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 18px;
-    }
-
-    .main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 60px 24px 50px;
-    }
-
-    .progress-steps {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 34px;
-      flex-wrap: wrap;
-    }
-
-    .progress-step {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    .progress-step.done {
-      color: var(--success);
-      background: var(--success-soft);
-      border-color: rgba(22, 163, 74, 0.25);
-    }
-
-    .progress-step.active {
-      color: var(--primary);
-      background: var(--primary-soft);
-      border-color: rgba(233, 43, 43, 0.25);
-    }
-
-    .result-header {
-      text-align: center;
-      max-width: 880px;
-      margin: 0 auto 34px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 15px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
-
-    .badge.success {
-      background: var(--success-soft);
-      color: var(--success);
-    }
-
-    .badge.danger {
-      background: var(--danger-soft);
-      color: var(--danger);
-    }
-
-    .badge.warning {
-      background: var(--warning-soft);
-      color: var(--warning);
-    }
-
-    .result-header h1 {
-      font-size: clamp(36px, 5vw, 54px);
-      line-height: 1.05;
-      letter-spacing: -1.4px;
-      margin-bottom: 16px;
-    }
-
-    .result-header p {
-      font-size: 19px;
-      line-height: 1.7;
-      color: var(--muted);
-    }
-
-    .result-layout {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 26px;
-      align-items: start;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 30px;
-    }
-
-    .status-panel {
-      text-align: center;
-    }
-
-    .status-icon {
-      width: 112px;
-      height: 112px;
-      border-radius: 32px;
-      margin: 0 auto 22px;
-      display: grid;
-      place-items: center;
-      font-size: 52px;
-      font-weight: 900;
-    }
-
-    .status-icon.success {
-      color: var(--success);
-      background: var(--success-soft);
-    }
-
-    .status-icon.danger {
-      color: var(--danger);
-      background: var(--danger-soft);
-    }
-
-    .status-icon.warning {
-      color: var(--warning);
-      background: var(--warning-soft);
-    }
-
-    .status-panel h2 {
-      font-size: 30px;
-      letter-spacing: -0.6px;
-      margin-bottom: 12px;
-    }
-
-    .status-panel p {
-      color: var(--muted);
-      line-height: 1.7;
-      font-size: 15px;
-      margin-bottom: 24px;
-    }
-
-    .result-score {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 18px;
-      margin-top: 20px;
-    }
-
-    .score-label {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .score-value {
-      font-size: 28px;
-      font-weight: 900;
-    }
-
-    .score-value.success {
-      color: var(--success);
-    }
-
-    .score-value.danger {
-      color: var(--danger);
-    }
-
-    .score-value.warning {
-      color: var(--warning);
-    }
-
-    .section-title {
-      font-size: 24px;
-      margin-bottom: 10px;
-      letter-spacing: -0.3px;
-    }
-
-    .section-subtitle {
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 24px;
-      font-size: 15px;
-    }
-
-    .details-grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .detail-card {
-      border: 1px solid var(--border);
-      background: var(--bg);
-      border-radius: 16px;
-      padding: 17px;
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-    }
-
-    .detail-card strong {
-      font-size: 14px;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .detail-card span {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    .status-tag {
-      padding: 7px 11px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .status-tag.success {
-      color: var(--success);
-      background: var(--success-soft);
-    }
-
-    .status-tag.warning {
-      color: var(--warning);
-      background: var(--warning-soft);
-    }
-
-    .status-tag.danger {
-      color: var(--danger);
-      background: var(--danger-soft);
-    }
-
-    .hash-box {
-      margin-top: 24px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: var(--bg);
-      padding: 18px;
-    }
-
-    .hash-box label {
-      display: block;
-      font-size: 14px;
-      font-weight: 900;
-      margin-bottom: 10px;
-    }
-
-    .hash-value {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 12px;
-      padding: 14px;
-      font-family: Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      word-break: break-all;
-      white-space: pre-wrap;
-      max-height: 260px;
-      overflow: auto;
-    }
-
-    .copy-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .copy-message {
-      display: none;
-      color: var(--success);
-      font-size: 13px;
-      font-weight: 800;
-      margin-top: 10px;
-    }
-
-    .copy-message.active {
-      display: block;
-    }
-
-    .actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 28px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn {
-      border: 0;
-      padding: 16px 24px;
-      border-radius: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.25s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-width: 165px;
-      font-size: 15px;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg);
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(233, 43, 43, 0.22);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-success {
-      background: var(--success);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(22, 163, 74, 0.2);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .small-action {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      padding: 11px 16px;
-      border-radius: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    .small-action:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    .note-box {
-      margin-top: 20px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      text-align: left;
-    }
-
-    .note-box strong {
-      color: var(--text);
-    }
-
-    @media (max-width: 920px) {
-      .result-layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .navbar {
-        padding: 0 18px;
-      }
-
-      .logo span {
-        display: none;
-      }
-
-      .nav-actions {
-        gap: 8px;
-      }
-
-      .nav-link {
-        display: none;
-      }
-
-      .nav-actions .nav-link:nth-child(2) {
-        display: inline-flex;
-        font-size: 13px;
-        padding: 9px 10px;
-      }
-
-      .nav-btn {
-        padding: 10px 12px;
-        font-size: 13px;
-      }
-
-      .theme-toggle {
-        width: 39px;
-        height: 39px;
-      }
-
-      .main {
-        padding: 42px 18px 40px;
-      }
-
-      .result-header p {
-        font-size: 17px;
-      }
-
-      .panel {
-        padding: 22px;
-      }
-
-      .detail-card {
-        flex-direction: column;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .copy-row {
-        flex-direction: column;
-      }
-
-      .small-action {
-        width: 100%;
-      }
-
-      .progress-step {
-        font-size: 13px;
-      }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+
+    :root{
+      --bg:#f5f7fb;
+      --bg-soft:#eef2ff;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --surface-3:#eef2ff;
+      --text:#0f172a;
+      --text-muted:#64748b;
+      --border:#e2e8f0;
+      --border-strong:#cbd5e1;
+      --accent:#3657e7;
+      --accent-hover:#2744bd;
+      --accent-soft:rgba(54,87,231,.10);
+      --accent-ring:rgba(54,87,231,.24);
+      --success:#0f8a62;
+      --success-soft:rgba(15,138,98,.10);
+      --danger:#c24135;
+      --danger-soft:rgba(194,65,53,.10);
+      --warning:#b7791f;
+      --warning-soft:rgba(183,121,31,.10);
+      --nav:#07111f;
+      --shadow-sm:0 1px 2px rgba(15,23,42,.06),0 4px 12px rgba(15,23,42,.05);
+      --shadow-md:0 10px 30px rgba(15,23,42,.08);
+      --shadow-lg:0 22px 60px rgba(15,23,42,.12);
+      --radius-sm:10px;
+      --radius-md:14px;
+      --radius-lg:22px;
+      --radius-xl:28px;
+    }
+
+    [data-theme="dark"]{
+      --bg:#080e1d;
+      --bg-soft:#111a35;
+      --surface:#0d1528;
+      --surface-2:#111b32;
+      --surface-3:#121f42;
+      --text:#f8fafc;
+      --text-muted:#94a3b8;
+      --border:#1e293b;
+      --border-strong:#334155;
+      --accent:#6884ff;
+      --accent-hover:#4f6bf0;
+      --accent-soft:rgba(104,132,255,.14);
+      --accent-ring:rgba(104,132,255,.30);
+      --success-soft:rgba(15,138,98,.18);
+      --danger-soft:rgba(194,65,53,.18);
+      --warning-soft:rgba(183,121,31,.18);
+      --nav:#050914;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.24),0 4px 12px rgba(0,0,0,.22);
+      --shadow-md:0 10px 30px rgba(0,0,0,.30);
+      --shadow-lg:0 22px 60px rgba(0,0,0,.42);
+    }
+
+    *,*::before,*::after{box-sizing:border-box}
+    *{margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      min-height:100vh;
+      font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size:15px;
+      line-height:1.65;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 50% -10%,var(--bg-soft),transparent 34rem),
+        var(--bg);
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      transition:background .25s ease,color .25s ease;
+    }
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    svg{display:block}
+
+    .navbar{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 clamp(18px,5vw,72px);
+      background:rgba(7,17,31,.96);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+      backdrop-filter:blur(16px);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      color:#fff;
+      min-width:0;
+    }
+    .brand-mark{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:#fff;
+      background:linear-gradient(135deg,#4f6bf0,#2f47c5);
+      box-shadow:0 10px 24px rgba(54,87,231,.32);
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .brand-name{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.03em;
+      line-height:1;
+    }
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .nav-link{
+      color:rgba(255,255,255,.68);
+      font-size:14px;
+      font-weight:600;
+      padding:9px 14px;
+      border-radius:10px;
+      transition:background .18s ease,color .18s ease;
+    }
+    .nav-link:hover,
+    .nav-link:focus-visible{color:#fff;background:rgba(255,255,255,.08);outline:none}
+    .nav-link.active{color:#fff;background:rgba(255,255,255,.12)}
+    .nav-separator{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 4px}
+    .nav-user{color:rgba(255,255,255,.74);font-size:14px;font-weight:600;padding:8px 10px}
+
+    .nav-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:8px 16px;
+      border:1px solid transparent;
+      border-radius:10px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+    }
+    .nav-button.secondary{
+      color:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.07);
+      border-color:rgba(255,255,255,.12);
+    }
+    .nav-button.secondary:hover,
+    .nav-button.secondary:focus-visible{color:#fff;background:rgba(255,255,255,.12);outline:none}
+    .nav-button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 10px 24px rgba(54,87,231,.28);
+    }
+    .nav-button.primary:hover,
+    .nav-button.primary:focus-visible{background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .theme-toggle{
+      width:38px;
+      height:38px;
+      display:grid;
+      place-items:center;
+      color:rgba(255,255,255,.82);
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:50%;
+      cursor:pointer;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .theme-toggle:hover,
+    .theme-toggle:focus-visible{color:#fff;background:rgba(255,255,255,.13);transform:translateY(-1px);outline:none}
+
+    .page{
+      width:min(1040px,100%);
+      margin:0 auto;
+      padding:64px 24px 84px;
+    }
+
+    .progress{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:34px;
+    }
+    .step-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      color:var(--text-muted);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:999px;
+      box-shadow:var(--shadow-sm);
+      font-size:13px;
+      font-weight:700;
+    }
+    .step-pill.done{color:var(--success);background:var(--success-soft);border-color:rgba(15,138,98,.24)}
+    .step-pill.active{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-ring)}
+
+    .hero{
+      max-width:760px;
+      margin:0 auto 34px;
+      text-align:center;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 14px;
+      margin-bottom:20px;
+      color:var(--accent);
+      background:var(--accent-soft);
+      border:1px solid var(--accent-ring);
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .eyebrow.success{color:var(--success);background:var(--success-soft);border-color:rgba(15,138,98,.24)}
+    .eyebrow.danger{color:var(--danger);background:var(--danger-soft);border-color:rgba(194,65,53,.24)}
+    .eyebrow.warning{color:var(--warning);background:var(--warning-soft);border-color:rgba(183,121,31,.24)}
+    .eyebrow-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+    .hero-title{
+      max-width:720px;
+      margin:0 auto;
+      font-size:clamp(36px,5.8vw,58px);
+      line-height:1.02;
+      font-weight:800;
+      letter-spacing:-.055em;
+    }
+    .hero-text{
+      max-width:640px;
+      margin:20px auto 0;
+      color:var(--text-muted);
+      font-size:16.5px;
+      line-height:1.75;
+    }
+
+    .result-shell{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 360px;
+      gap:22px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-lg);
+    }
+    .summary-panel{
+      padding:34px;
+      text-align:center;
+    }
+    .details-panel{padding:28px}
+    .status-icon{
+      width:92px;
+      height:92px;
+      display:grid;
+      place-items:center;
+      margin:0 auto 20px;
+      border-radius:28px;
+    }
+    .status-icon.success{color:var(--success);background:var(--success-soft)}
+    .status-icon.danger{color:var(--danger);background:var(--danger-soft)}
+    .status-icon.warning{color:var(--warning);background:var(--warning-soft)}
+    .summary-title{
+      margin-bottom:10px;
+      font-size:28px;
+      line-height:1.18;
+      font-weight:800;
+      letter-spacing:-.04em;
+    }
+    .summary-text{
+      max-width:560px;
+      margin:0 auto;
+      color:var(--text-muted);
+      font-size:15.5px;
+      line-height:1.75;
+    }
+    .status-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:22px;
+      padding:9px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .status-badge.success{color:var(--success);background:var(--success-soft);border:1px solid rgba(15,138,98,.24)}
+    .status-badge.danger{color:var(--danger);background:var(--danger-soft);border:1px solid rgba(194,65,53,.24)}
+    .status-badge.warning{color:var(--warning);background:var(--warning-soft);border:1px solid rgba(183,121,31,.24)}
+
+    .primary-actions{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:30px;
+    }
+    .primary-actions.single{
+      grid-template-columns:minmax(260px,520px);
+      justify-content:center;
+    }
+    .button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+      min-height:50px;
+      padding:12px 20px;
+      border:1px solid transparent;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      white-space:nowrap;
+      transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,opacity .18s ease;
+    }
+    .button.large{
+      min-height:62px;
+      padding:16px 28px;
+      border-radius:17px;
+      font-size:17px;
+      box-shadow:0 18px 38px rgba(15,138,98,.24);
+    }
+    .button.primary{
+      color:#fff;
+      background:var(--accent);
+      box-shadow:0 14px 30px rgba(54,87,231,.25);
+    }
+    .button.primary:hover,
+    .button.primary:focus-visible{background:var(--accent-hover);transform:translateY(-1px);outline:none}
+    .button.success{
+      color:#fff;
+      background:var(--success);
+      box-shadow:0 14px 30px rgba(15,138,98,.22);
+    }
+    .button.success:hover,
+    .button.success:focus-visible{filter:brightness(1.04);transform:translateY(-1px);outline:none}
+    .button.secondary{
+      color:var(--text);
+      background:var(--surface);
+      border-color:var(--border);
+      box-shadow:var(--shadow-sm);
+    }
+    .button.secondary:hover,
+    .button.secondary:focus-visible{color:var(--accent);border-color:var(--accent-ring);transform:translateY(-1px);outline:none}
+
+    .secondary-actions{
+      display:flex;
+      justify-content:center;
+      gap:18px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    }
+    .text-link{
+      color:var(--text-muted);
+      font-size:14px;
+      font-weight:800;
+      transition:color .18s ease;
+    }
+    .text-link:hover,
+    .text-link:focus-visible{color:var(--accent);outline:none}
+
+    .section-title{
+      margin-bottom:6px;
+      font-size:20px;
+      line-height:1.3;
+      font-weight:800;
+      letter-spacing:-.035em;
+    }
+    .section-subtitle{
+      margin-bottom:20px;
+      color:var(--text-muted);
+      font-size:14px;
+      line-height:1.65;
+    }
+    .detail-list{
+      display:grid;
+      gap:12px;
+    }
+    .detail-item{
+      padding:15px 16px;
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+    }
+    .detail-label{
+      display:block;
+      margin-bottom:4px;
+      color:var(--text-muted);
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .detail-value{
+      display:block;
+      color:var(--text);
+      font-size:14px;
+      font-weight:700;
+      line-height:1.55;
+      word-break:break-word;
+    }
+    .mono{
+      font-family:'JetBrains Mono',monospace;
+      font-size:12.5px;
+      font-weight:600;
+      letter-spacing:-.02em;
+    }
+    .certificate-card{
+      margin-top:18px;
+      padding:18px;
+      background:linear-gradient(135deg,var(--accent-soft),transparent 70%),var(--surface-2);
+      border:1px solid var(--accent-ring);
+      border-radius:var(--radius-lg);
+    }
+    .certificate-heading{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+      font-size:16px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .certificate-heading span{
+      width:36px;
+      height:36px;
+      display:grid;
+      place-items:center;
+      color:var(--accent);
+      background:var(--surface);
+      border:1px solid var(--accent-ring);
+      border-radius:12px;
+    }
+    .certificate-text{color:var(--text-muted);font-size:13.5px;line-height:1.65}
+    .certificate-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .small-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:8px 13px;
+      color:var(--text);
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:11px;
+      font-size:13px;
+      font-weight:800;
+      cursor:pointer;
+      transition:color .18s ease,border-color .18s ease,transform .18s ease;
+    }
+    .small-button:hover,
+    .small-button:focus-visible{color:var(--accent);border-color:var(--accent-ring);transform:translateY(-1px);outline:none}
+    .copy-status{
+      display:none;
+      margin-top:8px;
+      color:var(--success);
+      font-size:12.5px;
+      font-weight:800;
+    }
+    .copy-status.show{display:block}
+    .note{
+      margin-top:18px;
+      padding:14px 16px;
+      color:var(--text-muted);
+      background:var(--surface-2);
+      border:1px solid var(--border);
+      border-radius:var(--radius-md);
+      font-size:13.5px;
+      line-height:1.65;
+    }
+    .note strong{color:var(--text)}
+
+    @media(max-width:940px){
+      .result-shell{grid-template-columns:1fr}
+      .nav-link{display:none}
+      .nav-separator{display:none}
+    }
+    @media(max-width:640px){
+      .navbar{height:auto;min-height:66px;padding:12px 16px;gap:12px}
+      .brand-name{display:none}
+      .nav-actions{gap:6px}
+      .nav-button{padding:8px 12px;font-size:13px}
+      .theme-toggle{width:36px;height:36px}
+      .page{padding:48px 16px 64px}
+      .hero-title{font-size:clamp(34px,12vw,46px)}
+      .hero-text{font-size:15.5px}
+      .summary-panel,.details-panel{padding:22px}
+      .primary-actions{grid-template-columns:1fr}
+      .button{width:100%}
+      .certificate-actions{flex-direction:column}
+      .small-button{width:100%}
     }
   </style>
 </head>
-
 <body>
-  <nav class="navbar">
-    <a href="{% url 'upload_pdf' %}" class="logo">
-      <div class="logo-icon">DS</div>
-      <span>Digital Signature</span>
-    </a>
+<nav class="navbar" aria-label="Main navigation">
+  <a href="{% url 'upload_pdf' %}" class="brand" aria-label="DocSign home">
+    <span class="brand-mark" aria-hidden="true">DS</span>
+    <span class="brand-name">DocSign</span>
+  </a>
 
-    <div class="nav-actions">
-      <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
-      <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+  <div class="nav-actions">
+    <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
+    <a href="{% url 'verify_pdf' %}" class="nav-link">Verify PDF</a>
+    <span class="nav-separator" aria-hidden="true"></span>
 
-      {% if user.is_authenticated %}
-        <span class="nav-link">Hi, {{ user.username }}</span>
+    {% if user.is_authenticated %}
+      <span class="nav-user">{{ user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}
+        <button class="nav-button secondary" type="submit">Log out</button>
+      </form>
+    {% else %}
+      <a href="#" class="nav-button secondary">Log in</a>
+      <a href="#" class="nav-button primary">Sign up</a>
+    {% endif %}
 
-        <form action="{% url 'logout' %}" method="post" style="display:inline;">
-          {% csrf_token %}
-          <button class="nav-btn nav-btn-outline" type="submit">Logout</button>
-        </form>
+    <button class="theme-toggle" id="themeBtn" type="button" aria-label="Toggle dark mode" aria-pressed="false"></button>
+  </div>
+</nav>
+
+<main class="page">
+  <div class="progress" aria-label="Process progress">
+    {% if document %}
+      <div class="step-pill done">Uploaded</div>
+      <div class="step-pill done">Signed</div>
+      <div class="step-pill active">Ready</div>
+    {% elif verification_result %}
+      <div class="step-pill done">Uploaded</div>
+      <div class="step-pill done">Checked</div>
+      <div class="step-pill active">Result</div>
+    {% else %}
+      <div class="step-pill active">Result</div>
+    {% endif %}
+  </div>
+
+  <section class="hero" aria-labelledby="resultTitle">
+    {% if document %}
+      <div class="eyebrow success"><span class="eyebrow-dot" aria-hidden="true"></span>Signing complete</div>
+      <h1 class="hero-title" id="resultTitle">Your document is ready</h1>
+      <p class="hero-text">Download the digital certificate first. It contains the verification record and QR code for sharing or future validation.</p>
+    {% elif verification_result %}
+      {% if verification_result.status == 'valid' %}
+        <div class="eyebrow success"><span class="eyebrow-dot" aria-hidden="true"></span>Verification passed</div>
+        <h1 class="hero-title" id="resultTitle">Document is authentic</h1>
+        <p class="hero-text">The uploaded PDF matches the recorded fingerprint. No change was detected.</p>
+      {% elif verification_result.status == 'modified' %}
+        <div class="eyebrow danger"><span class="eyebrow-dot" aria-hidden="true"></span>Verification failed</div>
+        <h1 class="hero-title" id="resultTitle">Document was modified</h1>
+        <p class="hero-text">The uploaded PDF does not match the recorded fingerprint for this certificate.</p>
       {% else %}
-        <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">Login</a>
-        <a href="{% url 'signup' %}" class="nav-btn nav-btn-primary">Sign up</a>
+        <div class="eyebrow warning"><span class="eyebrow-dot" aria-hidden="true"></span>Verification incomplete</div>
+        <h1 class="hero-title" id="resultTitle">Could not verify the document</h1>
+        <p class="hero-text">The verification information is missing, incomplete, or does not match the certificate data.</p>
       {% endif %}
+    {% else %}
+      <div class="eyebrow warning"><span class="eyebrow-dot" aria-hidden="true"></span>No result</div>
+      <h1 class="hero-title" id="resultTitle">No document result found</h1>
+      <p class="hero-text">Please upload a PDF to sign or verify an existing signed document.</p>
+    {% endif %}
+  </section>
 
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button>
-    </div>
-  </nav>
-
-  <main class="main">
-    <div class="progress-steps">
+  <section class="result-shell" aria-label="Result summary">
+    <div class="panel summary-panel">
       {% if document %}
-        <div class="progress-step done">✓ Upload PDF</div>
-        <div class="progress-step done">✓ Sign Document</div>
-        <div class="progress-step active">3 Download Result</div>
-        <div class="progress-step">4 Verify Later</div>
-      {% elif verification_result %}
-        <div class="progress-step done">✓ Upload PDF</div>
-        <div class="progress-step done">✓ Check Signature</div>
-        <div class="progress-step active">3 Verification Result</div>
-      {% else %}
-        <div class="progress-step active">Result Status</div>
-      {% endif %}
-    </div>
+        <div class="status-icon success" aria-hidden="true">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 6.5L9 17.5L4 12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="summary-title">Successfully signed</h2>
+        <p class="summary-text">The PDF has been signed and linked to a digital certificate. Download the certificate to keep the verification record and QR code with the document.</p>
+        <div class="status-badge success">Signed</div>
 
-    <section class="result-header">
-      {% if document %}
-        <div class="badge success">Signing completed</div>
-        <h1>Your signed PDF is ready</h1>
-        <p>
-          Your PDF hash, signature value, and public key have been generated.
-          Download the signed PDF and save the verification details below.
-        </p>
-      {% elif verification_result %}
-        {% if verification_result.is_valid %}
-          <div class="badge success">Verification completed</div>
-          <h1>PDF signature is valid</h1>
-          <p>
-            The uploaded PDF matches the submitted signature and public key.
-            The document appears unchanged based on the verification data.
-          </p>
-        {% else %}
-          <div class="badge danger">Verification failed</div>
-          <h1>PDF signature is invalid</h1>
-          <p>
-            The uploaded PDF could not be verified against the submitted signature and public key.
-            The file may have changed, or the verification data may be incorrect.
-          </p>
-        {% endif %}
-      {% else %}
-        <div class="badge warning">No result found</div>
-        <h1>No signing or verification result available</h1>
-        <p>
-          Please upload a PDF to generate a signature or verify an existing signed document.
-        </p>
-      {% endif %}
-    </section>
-
-    <section class="result-layout">
-      <div class="panel status-panel">
-        {% if document %}
-          <div class="status-icon success">✓</div>
-          <h2>Successfully Signed</h2>
-          <p>
-            The PDF has been processed successfully. Download your signed PDF and keep the signature
-            value and public key for future verification.
-          </p>
-
-          <div class="result-score">
-            <div class="score-label">Document Status</div>
-            <div class="score-value success">SIGNED</div>
-          </div>
-
-        {% elif verification_result %}
-          {% if verification_result.is_valid %}
-            <div class="status-icon success">✓</div>
-            <h2>Valid Signature</h2>
-            <p>
-              {% if verification_result.message %}
-                {{ verification_result.message }}
-              {% else %}
-                The signature matches the document hash and public key.
-              {% endif %}
-            </p>
-
-            <div class="result-score">
-              <div class="score-label">Verification Status</div>
-              <div class="score-value success">VALID</div>
-            </div>
-          {% else %}
-            <div class="status-icon danger">!</div>
-            <h2>Invalid Signature</h2>
-            <p>
-              {% if verification_result.message %}
-                {{ verification_result.message }}
-              {% else %}
-                The signature does not match the uploaded document or public key.
-              {% endif %}
-            </p>
-
-            <div class="result-score">
-              <div class="score-label">Verification Status</div>
-              <div class="score-value danger">INVALID</div>
-            </div>
+        <div class="primary-actions single">
+          {% if document and certificate_pdf_url %}
+            <a href="{{ certificate_pdf_url }}" class="button success large" download>Download digital certificate</a>
+          {% elif document and certificate_url %}
+            <a href="{{ certificate_url }}" class="button success large" target="_blank" rel="noopener">Open digital certificate</a>
           {% endif %}
+        </div>
 
-        {% else %}
-          <div class="status-icon warning">?</div>
-          <h2>No Result Available</h2>
-          <p>
-            The result page did not receive a document or verification result from the backend.
-          </p>
-
-          <div class="result-score">
-            <div class="score-label">Status</div>
-            <div class="score-value warning">REVIEW</div>
-          </div>
-        {% endif %}
-
-        <div class="actions">
+        <div class="secondary-actions">
           {% if document and document.signed_pdf %}
-            <a href="{{ document.signed_pdf.url }}" class="btn btn-success" download>
-              Download Signed PDF
-            </a>
+            <a href="{{ document.signed_pdf.url }}" class="text-link" download>Download signed PDF</a>
           {% elif document and document.original_pdf %}
-            <a href="{{ document.original_pdf.url }}" class="btn btn-success" download>
-              Download PDF
-            </a>
+            <a href="{{ document.original_pdf.url }}" class="text-link" download>Download signed PDF</a>
           {% endif %}
+          <a href="{% url 'upload_pdf' %}" class="text-link">Sign another PDF</a>
+          <a href="{% url 'verify_pdf' %}" class="text-link">Verify a PDF</a>
+        </div>
+      {% elif verification_result %}
+        {% if verification_result.status == 'valid' %}
+          <div class="status-icon success" aria-hidden="true">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6.5L9 17.5L4 12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="summary-title">Authentic document</h2>
+          <p class="summary-text">{{ verification_result.message }}</p>
+          <div class="status-badge success">Valid</div>
+        {% elif verification_result.status == 'modified' %}
+          <div class="status-icon danger" aria-hidden="true">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 8V12.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M12 16H12.01" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+              <path d="M10.3 4.7L2.8 17.7C2.1 18.9 3 20.5 4.4 20.5H19.6C21 20.5 21.9 18.9 21.2 17.7L13.7 4.7C13 3.5 11 3.5 10.3 4.7Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2 class="summary-title">Document modified</h2>
+          <p class="summary-text">{{ verification_result.message }}</p>
+          <div class="status-badge danger">Modified</div>
+        {% else %}
+          <div class="status-icon warning" aria-hidden="true">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 17H12.01" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+              <path d="M9.8 9.2C10.15 8.35 10.95 7.75 12 7.75C13.25 7.75 14.25 8.55 14.25 9.85C14.25 11.4 12.85 11.85 12.3 12.75C12.1 13.1 12 13.45 12 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.2"/>
+            </svg>
+          </div>
+          <h2 class="summary-title">Verification incomplete</h2>
+          <p class="summary-text">{{ verification_result.message }}</p>
+          <div class="status-badge warning">Unknown</div>
+        {% endif %}
 
-          <a href="{% url 'verify_pdf' %}" class="btn btn-secondary">Verify PDF</a>
-          <a href="{% url 'upload_pdf' %}" class="btn btn-primary">Sign New PDF</a>
+        <div class="primary-actions">
+          <a href="{% url 'verify_pdf' %}" class="button primary">Verify another PDF</a>
+          <a href="{% url 'upload_pdf' %}" class="button secondary">Sign a PDF</a>
+        </div>
+      {% else %}
+        <div class="status-icon warning" aria-hidden="true">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+            <path d="M9.8 9.2C10.15 8.35 10.95 7.75 12 7.75C13.25 7.75 14.25 8.55 14.25 9.85C14.25 11.4 12.85 11.85 12.3 12.75C12.1 13.1 12 13.45 12 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.2"/>
+          </svg>
+        </div>
+        <h2 class="summary-title">No result available</h2>
+        <p class="summary-text">The result page did not receive document or verification data from the backend.</p>
+        <div class="primary-actions">
+          <a href="{% url 'upload_pdf' %}" class="button primary">Sign a PDF</a>
+          <a href="{% url 'verify_pdf' %}" class="button secondary">Verify a PDF</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <aside class="panel details-panel" aria-label="Document details">
+      <h2 class="section-title">File details</h2>
+      <p class="section-subtitle">Only the key information needed for the user.</p>
+
+      <div class="detail-list">
+        <div class="detail-item">
+          <span class="detail-label">File name</span>
+          <span class="detail-value">{% if document %}{{ document.filename }}{% else %}Uploaded PDF{% endif %}</span>
         </div>
 
-        {% if document %}
-          <div class="note-box">
-            <strong>Important:</strong> Keep the public key and signature value. They are required
-            to verify this document later.
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value">
+            {% if document %}Signed
+            {% elif verification_result and verification_result.status == 'valid' %}Verified as authentic
+            {% elif verification_result and verification_result.status == 'modified' %}Modified after signing
+            {% elif verification_result %}Could not be verified
+            {% else %}No result{% endif %}
+          </span>
+        </div>
+
+        {% if document.created_at or document.updated_at or document.signed_at %}
+          <div class="detail-item">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">
+              {% if document.signed_at %}{{ document.signed_at }}
+              {% elif document.updated_at %}{{ document.updated_at }}
+              {% else %}{{ document.created_at }}{% endif %}
+            </span>
           </div>
-        {% elif verification_result %}
-          <div class="note-box">
-            <strong>Verification note:</strong> This result is based on the uploaded PDF, submitted
-            signature value, and submitted public key.
+        {% endif %}
+
+        {% if document.file_hash or verification_result.uploaded_hash %}
+          <div class="detail-item">
+            <span class="detail-label">Fingerprint</span>
+            <span class="detail-value mono">
+              {% if document %}{{ document.file_hash|truncatechars:34 }}{% else %}{{ verification_result.uploaded_hash|truncatechars:34 }}{% endif %}
+            </span>
           </div>
         {% endif %}
       </div>
 
-      <div class="panel">
-        <h2 class="section-title">Result Details</h2>
-        <p class="section-subtitle">
-          Review the information generated during the signing or verification process.
-        </p>
-
-        <div class="details-grid">
-          <div class="detail-card">
-            <div>
-              <strong>File Name</strong>
-              <span>
-                {% if document %}
-                  {{ document.filename }}
-                {% elif verification_result.filename %}
-                  {{ verification_result.filename }}
-                {% else %}
-                  Uploaded PDF
-                {% endif %}
-              </span>
-            </div>
-            <div class="status-tag success">PDF</div>
+      {% if document and certificate_url %}
+        <div class="certificate-card">
+          <h3 class="certificate-heading">
+            <span aria-hidden="true">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4H10V10H4V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M14 4H20V10H14V4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M4 14H10V20H4V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M14 14H16.5V16.5H14V14Z" fill="currentColor"/>
+                <path d="M18 14H20V20H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 18H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Digital certificate
+          </h3>
+          <p class="certificate-text">The certificate page contains the QR code and verification record. Share this page when someone needs to confirm the document.</p>
+          <div class="certificate-actions">
+            <a href="{{ certificate_url }}" class="small-button" target="_blank" rel="noopener">Open certificate page</a>
+            <button class="small-button" type="button" onclick="copyCertificateLink()">Copy link</button>
           </div>
-
-          <div class="detail-card">
-            <div>
-              <strong>Operation Type</strong>
-              <span>
-                {% if document %}
-                  Digital Signing
-                {% elif verification_result %}
-                  Signature Verification
-                {% else %}
-                  No operation received
-                {% endif %}
-              </span>
-            </div>
-
-            {% if document %}
-              <div class="status-tag success">Completed</div>
-            {% elif verification_result and verification_result.is_valid %}
-              <div class="status-tag success">Completed</div>
-            {% elif verification_result %}
-              <div class="status-tag danger">Failed</div>
-            {% else %}
-              <div class="status-tag warning">Review</div>
-            {% endif %}
-          </div>
-
-          <div class="detail-card">
-            <div>
-              <strong>Access Type</strong>
-              <span>Free tool — no account required</span>
-            </div>
-            <div class="status-tag success">Free</div>
-          </div>
-
-          <div class="detail-card">
-            <div>
-              <strong>Generated / Checked At</strong>
-              <span>
-                {% if document.updated_at %}
-                  {{ document.updated_at }}
-                {% elif document.created_at %}
-                  {{ document.created_at }}
-                {% elif verification_result.checked_at %}
-                  {{ verification_result.checked_at }}
-                {% else %}
-                  Current verification session
-                {% endif %}
-              </span>
-            </div>
-            <div class="status-tag success">Timestamp</div>
-          </div>
-
-          <div class="detail-card">
-            <div>
-              <strong>Hash Algorithm</strong>
-              <span>SHA-256</span>
-            </div>
-            <div class="status-tag success">Secure</div>
-          </div>
-
-          <div class="detail-card">
-            <div>
-              <strong>Signature Method</strong>
-              <span>RSA digital signature over the document hash</span>
-            </div>
-            <div class="status-tag success">RSA</div>
+          <div class="copy-status" id="copyStatus">Certificate link copied.</div>
+          <span id="certificateUrl" hidden>{{ certificate_url }}</span>
+        </div>
+      {% elif document and certificate_pdf_url %}
+        <div class="certificate-card">
+          <h3 class="certificate-heading">
+            <span aria-hidden="true">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 3H14L19 8V21H7C5.9 21 5 20.1 5 19V5C5 3.9 5.9 3 7 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M9 14H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M9 17H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Digital certificate
+          </h3>
+          <p class="certificate-text">Download or open the certificate PDF to view the verification record and QR code.</p>
+          <div class="certificate-actions">
+            <a href="{{ certificate_pdf_url }}" class="small-button" target="_blank" rel="noopener">Open certificate PDF</a>
           </div>
         </div>
+      {% endif %}
 
-        <div class="hash-box">
-          <label>Document Hash</label>
-          <div class="hash-value" id="documentHash">
-{% if document %}
-{{ document.file_hash }}
-{% elif verification_result.file_hash %}
-{{ verification_result.file_hash }}
-{% else %}
-No document hash was returned.
-{% endif %}
-          </div>
-
-          {% if document.file_hash or verification_result.file_hash %}
-            <div class="copy-row">
-              <button class="small-action" type="button" onclick="copyText('documentHash', 'copyHashMessage')">
-                Copy Hash
-              </button>
-            </div>
-            <div class="copy-message" id="copyHashMessage">Copied successfully.</div>
-          {% endif %}
-        </div>
-
-        {% if document %}
-          <div class="hash-box">
-            <label>Signature Value</label>
-            <div class="hash-value" id="signatureValue">
-{% if document.signature %}
-{{ document.signature }}
-{% else %}
-No signature value was returned.
-{% endif %}
-            </div>
-
-            {% if document.signature %}
-              <div class="copy-row">
-                <button class="small-action" type="button" onclick="copyText('signatureValue', 'copySignatureMessage')">
-                  Copy Signature
-                </button>
-              </div>
-              <div class="copy-message" id="copySignatureMessage">Copied successfully.</div>
-            {% endif %}
-          </div>
-
-          <div class="hash-box">
-            <label>Public Key</label>
-            <div class="hash-value" id="publicKeyValue">
-{% if document.public_key %}
-{{ document.public_key }}
-{% else %}
-No public key was returned.
-{% endif %}
-            </div>
-
-            {% if document.public_key %}
-              <div class="copy-row">
-                <button class="small-action" type="button" onclick="copyText('publicKeyValue', 'copyPublicKeyMessage')">
-                  Copy Public Key
-                </button>
-              </div>
-              <div class="copy-message" id="copyPublicKeyMessage">Copied successfully.</div>
-            {% endif %}
-          </div>
-        {% elif verification_result %}
-          <div class="hash-box">
-            <label>Submitted Signature</label>
-            <div class="hash-value">
-              Verification mode uses the signature value submitted by the user. It is not displayed here unless your backend returns it.
-            </div>
-          </div>
-
-          <div class="hash-box">
-            <label>Submitted Public Key</label>
-            <div class="hash-value">
-              Verification mode uses the public key submitted by the user. It is not displayed here unless your backend returns it.
-            </div>
-          </div>
-        {% endif %}
-
-        <div class="note-box">
-          <strong>Technical note:</strong> This page reports the hash/signature verification result generated by your system.
-          Adobe-certified PDF signatures require a certificate-based signing workflow.
-        </div>
+      <div class="note">
+        <strong>Technical note:</strong> DocSign creates a hash-based verification record. It is not an Adobe-certified CA signature.
       </div>
-    </section>
-  </main>
+    </aside>
+  </section>
+</main>
 
-  <script>
-    const html = document.documentElement;
-    const themeToggle = document.getElementById("themeToggle");
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
 
-    const savedTheme = localStorage.getItem("theme") || "light";
-    html.setAttribute("data-theme", savedTheme);
-    themeToggle.textContent = savedTheme === "light" ? "☾" : "☀";
+  const themeIcons = {
+    light: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.25 15.25C18.96 16.33 17.29 16.98 15.47 16.98C11.35 16.98 8.02 13.65 8.02 9.53C8.02 7.71 8.67 6.04 9.75 4.75C6.42 5.74 4 8.83 4 12.48C4 16.91 7.59 20.5 12.02 20.5C15.67 20.5 18.76 18.58 20.25 15.25Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    dark: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 22V20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4.22 19.78L5.64 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M5.64 5.64L4.22 4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19.78 19.78L18.36 18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>'
+  };
 
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "light" ? "dark" : "light";
+  function setTheme(theme){
+    root.dataset.theme = theme;
+    themeBtn.innerHTML = theme === 'light' ? themeIcons.light : themeIcons.dark;
+    themeBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    try{ localStorage.setItem('theme', theme); }catch(e){}
+  }
 
-      html.setAttribute("data-theme", newTheme);
-      themeToggle.textContent = newTheme === "light" ? "☾" : "☀";
-      localStorage.setItem("theme", newTheme);
+  let savedTheme = 'light';
+  try{ savedTheme = localStorage.getItem('theme') || 'light'; }catch(e){}
+  setTheme(savedTheme);
+  themeBtn.addEventListener('click', () => setTheme(root.dataset.theme === 'light' ? 'dark' : 'light'));
+
+  function copyCertificateLink(){
+    const source = document.getElementById('certificateUrl');
+    const status = document.getElementById('copyStatus');
+    if(!source || !source.textContent.trim()) return;
+
+    navigator.clipboard.writeText(source.textContent.trim()).then(() => {
+      if(!status) return;
+      status.classList.add('show');
+      window.setTimeout(() => status.classList.remove('show'), 1800);
+    }).catch(() => {
+      if(!status) return;
+      status.textContent = 'Could not copy automatically. Please copy it from the certificate page.';
+      status.classList.add('show');
+      window.setTimeout(() => {
+        status.textContent = 'Certificate link copied.';
+        status.classList.remove('show');
+      }, 2600);
     });
-
-    function copyText(elementId, messageId) {
-      const element = document.getElementById(elementId);
-      const message = document.getElementById(messageId);
-
-      if (!element) return;
-
-      const text = element.textContent.trim();
-
-      if (!text || text.includes("No ") || text.includes("not displayed")) {
-        return;
-      }
-
-      navigator.clipboard.writeText(text).then(() => {
-        if (message) {
-          message.classList.add("active");
-
-          setTimeout(() => {
-            message.classList.remove("active");
-          }, 1800);
-        }
-      });
-    }
-  </script>
+  }
+</script>
 </body>
 </html>

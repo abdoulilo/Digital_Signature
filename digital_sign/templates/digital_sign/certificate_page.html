@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Certificate — {{ document.filename }}</title>
+  {% load static %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f5f7fb; --surface:#ffffff; --surface-2:#f8fafc;
+      --text:#101828; --muted:#667085; --muted-2:#98a2b3; --border:#e4e7ec;
+      --brand:#3655e7; --brand-dark:#2945ca; --brand-soft:#eef3ff;
+      --success:#07885f; --success-soft:#eafaf4;
+      --danger:#c0342b; --danger-soft:#fff0ee;
+      --warning:#b76e00; --warning-soft:#fff7e8;
+      --nav:#080d19; --radius:16px; --radius-lg:24px;
+      --shadow:0 20px 60px rgba(16,24,40,.08),0 4px 12px rgba(16,24,40,.05);
+      --shadow-sm:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);
+    }
+    [data-theme="dark"]{
+      --bg:#080d19; --surface:#101828; --surface-2:#172033;
+      --text:#f8fafc; --muted:#a8b3c7; --muted-2:#7d89a1; --border:#24324d;
+      --brand-soft:rgba(54,85,231,.16); --success-soft:rgba(7,136,95,.16);
+      --danger-soft:rgba(192,52,43,.16); --warning-soft:rgba(183,110,0,.16);
+      --shadow:0 20px 60px rgba(0,0,0,.35); --shadow-sm:0 1px 3px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    .navbar{position:sticky;top:0;z-index:100;height:68px;background:var(--nav);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,72px);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+    .logo{display:flex;align-items:center;gap:11px;color:#fff;font-weight:800;letter-spacing:-.02em}
+    .logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#4d65f3,#223fd2);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(54,85,231,.32)}
+    .nav-r{display:flex;align-items:center;gap:8px}
+    .nav-link{color:rgba(255,255,255,.66);font-size:14px;font-weight:600;padding:9px 14px;border-radius:10px;transition:.2s}
+    .nav-link:hover,.nav-link.active{color:#fff;background:rgba(255,255,255,.08)}
+    .nav-div{width:1px;height:24px;background:rgba(255,255,255,.12);margin:0 4px}
+    .nbtn{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;color:#fff;background:rgba(255,255,255,.06);cursor:pointer}
+    .nbtn-accent{border-color:transparent;background:#3655e7;box-shadow:0 8px 22px rgba(54,85,231,.32)}
+    .nav-user{color:rgba(255,255,255,.7);font-size:14px;font-weight:600;padding:8px}
+    .theme-btn{width:38px;height:38px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;display:grid;place-items:center;cursor:pointer}
+    .theme-btn svg{width:18px;height:18px}
+    .page{max-width:1120px;margin:0 auto;padding:64px 24px 84px}
+    .hero{text-align:center;max-width:720px;margin:0 auto 34px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--brand-soft);color:var(--brand);border:1px solid rgba(54,85,231,.18);padding:7px 14px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px}
+    .eyebrow-dot{width:7px;height:7px;border-radius:999px;background:var(--brand)}
+    .hero h1{font-size:clamp(32px,4.8vw,56px);line-height:1.02;letter-spacing:-.055em;font-weight:800;margin-bottom:16px}
+    .hero p{color:var(--muted);font-size:17px;max-width:640px;margin:0 auto}
+    .grid{display:grid;grid-template-columns:.86fr 1.14fr;gap:22px;align-items:start}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:28px}
+    .section-title{font-size:20px;line-height:1.25;font-weight:800;letter-spacing:-.025em;margin-bottom:8px}
+    .section-sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+    .certificate-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:22px}
+    .cert-icon{width:52px;height:52px;border-radius:14px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;flex:none}
+    .cert-icon svg{width:25px;height:25px}
+    .cert-name{font-size:17px;font-weight:800;letter-spacing:-.02em;word-break:break-word}
+    .cert-type{font-size:13px;color:var(--muted);margin-top:2px}
+    .status-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800;margin-top:10px;text-transform:uppercase;letter-spacing:.05em}
+    .status-pill.signed{background:var(--success-soft);color:var(--success)}
+    .status-pill.other{background:var(--surface-2);color:var(--muted);border:1px solid var(--border)}
+    .status-dot{width:7px;height:7px;border-radius:999px;background:currentColor}
+    .meta{display:grid;gap:12px}
+    .meta-row{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+    .meta-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .meta-val{font-size:14px;font-weight:600;word-break:break-word}
+    .fingerprint{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;color:var(--muted);font-size:13px;letter-spacing:.02em}
+    .verify-card{position:relative;overflow:hidden}
+    .verify-card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,var(--brand),#11a36a)}
+    .dropzone{position:relative;display:flex;align-items:center;justify-content:center;min-height:250px;text-align:center;border:1.8px dashed #b9c3d5;border-radius:20px;background:linear-gradient(180deg,var(--surface-2),var(--surface));padding:30px;cursor:pointer;transition:.2s}
+    .dropzone:hover,.dropzone.over{border-color:var(--brand);background:var(--brand-soft)}
+    #pdfInput{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip-path:inset(50%);pointer-events:none}
+    .upload-icon{width:66px;height:66px;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;margin:0 auto 16px;box-shadow:0 16px 34px rgba(54,85,231,.26)}
+    .upload-icon svg{width:28px;height:28px}
+    .upload-title{font-size:20px;font-weight:800;letter-spacing:-.025em;margin-bottom:6px}
+    .upload-copy{font-size:14px;color:var(--muted);margin-bottom:18px}
+    .pick-btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);font-size:14px;font-weight:800;padding:11px 18px;color:var(--text)}
+    .filechip{display:none;margin-top:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;align-items:center;justify-content:space-between;gap:12px}
+    .filechip.show{display:flex}
+    .chip-main{min-width:0}
+    .chip-name{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:470px}
+    .chip-size{font-size:13px;color:var(--muted);margin-top:2px}
+    .remove-btn{background:transparent;border:0;color:var(--danger);font-weight:800;font-size:13px;cursor:pointer;padding:6px 8px;border-radius:8px}
+    .remove-btn:hover{background:var(--danger-soft)}
+    .field-err{display:none;color:var(--danger);font-size:13px;font-weight:700;margin-top:10px}
+    .field-err.show{display:block}
+    .btn{width:100%;display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:14px;padding:14px 22px;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;margin-top:16px}
+    .btn-primary{background:var(--brand);color:#fff;box-shadow:0 16px 32px rgba(54,85,231,.24)}
+    .btn-primary:hover:not(:disabled){background:var(--brand-dark);transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+    .note{margin-top:16px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:13px 15px;color:var(--muted);font-size:13px}
+    .note strong{color:var(--text)}
+    .spinner{display:none;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:999px;animation:spin .75s linear infinite;margin:16px auto 0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .result-banner{display:none;margin-top:18px;border-radius:18px;padding:18px;border:1px solid var(--border)}
+    .result-banner.valid{display:block;background:var(--success-soft);border-color:rgba(7,136,95,.18);color:var(--success)}
+    .result-banner.modified{display:block;background:var(--danger-soft);border-color:rgba(192,52,43,.18);color:var(--danger)}
+    .result-banner.unknown{display:block;background:var(--warning-soft);border-color:rgba(183,110,0,.18);color:var(--warning)}
+    .result-head{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+    .result-icon{width:28px;height:28px;border-radius:999px;display:grid;place-items:center;background:rgba(255,255,255,.56);flex:none}
+    .result-icon svg{width:17px;height:17px}
+    .result-msg{font-size:14px;color:inherit;opacity:.92}
+    .result-detail{display:none;margin-top:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;font-size:12px;line-height:1.65;opacity:.75;word-break:break-all}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+    .text-link{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:11px 16px;font-weight:800;font-size:14px;box-shadow:var(--shadow-sm)}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.page{padding-top:44px}.hero{text-align:left}.hero p{margin:0}}
+    @media(max-width:680px){.navbar{padding:0 16px}.logo span{display:none}.nav-link{display:none}.nav-div{display:none}.page{padding:36px 16px 60px}.card{padding:22px}.dropzone{min-height:220px;padding:24px}.filechip{align-items:flex-start}.actions{flex-direction:column}.text-link{width:100%}}
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="{% url 'upload_pdf' %}" class="logo">
+    <div class="logo-mark">DS</div>
+    <span>DocSign</span>
+  </a>
+  <div class="nav-r">
+    <a href="{% url 'upload_pdf' %}" class="nav-link">Sign PDF</a>
+    <a href="{% url 'verify_pdf' %}" class="nav-link active">Verify PDF</a>
+    <div class="nav-div"></div>
+    {% if user.is_authenticated %}
+      <span class="nav-user">{{ user.username }}</span>
+      <form action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}
+        <button class="nbtn" type="submit">Log out</button>
+      </form>
+    {% else %}
+      <a href="#" class="nbtn">Log in</a>
+      <a href="#" class="nbtn nbtn-accent">Sign up</a>
+    {% endif %}
+    <button class="theme-btn" id="themeBtn" aria-label="Toggle theme"></button>
+  </div>
+</nav>
+
+<main class="page">
+  <section class="hero">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Digital certificate</div>
+    <h1>Verify this PDF</h1>
+    <p>This certificate is the verification record. Upload the PDF you received and DocSign will check it against this certificate. </p>
+  </section>
+
+  <section class="grid">
+    <aside class="card">
+      <div class="certificate-head">
+        <div class="cert-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.5h6.2L18 8.3v12.2H7V3.5Z" stroke="currentColor" stroke-width="1.8"/><path d="M13 3.8V9h5" stroke="currentColor" stroke-width="1.8"/><path d="M9.3 13h5.4M9.3 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="cert-name">{{ document.filename }}</div>
+          <div class="cert-type">Digital certificate</div>
+          {% if document.status == "signed" %}
+            <span class="status-pill signed"><span class="status-dot"></span>Signed</span>
+          {% else %}
+            <span class="status-pill other"><span class="status-dot"></span>{{ document.status|default:"Certificate" }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-row">
+          <div class="meta-label">Document name</div>
+          <div class="meta-val">{{ document.filename }}</div>
+        </div>
+        {% if document.signed_at %}
+        <div class="meta-row">
+          <div class="meta-label">Signed at</div>
+          <div class="meta-val">{{ document.signed_at|date:"M j, Y, g:i a" }}</div>
+        </div>
+        {% endif %}
+        {% if document.uploaded_by %}
+        <div class="meta-row">
+          <div class="meta-label">Signed by</div>
+          <div class="meta-val">{{ document.uploaded_by.get_full_name|default:document.uploaded_by.username }}</div>
+        </div>
+        {% endif %}
+        <div class="meta-row">
+          <div class="meta-label">Fingerprint</div>
+          <div class="meta-val fingerprint">{{ document.file_hash|truncatechars:34 }}</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-label">Method</div>
+          <div class="meta-val">SHA-256 with RSA-PSS</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>What to share:</strong> Send this certificate link or QR code with the PDF. The receiver only needs to open this page and upload the PDF copy.
+      </div>
+    </aside>
+
+    <section class="card verify-card">
+      <div class="section-title">Upload the PDF copy</div>
+      <p class="section-sub">Choose the PDF you want to verify against this certificate.</p>
+
+      <form id="verifyForm">
+        {% csrf_token %}
+        <label class="dropzone" id="dropZone" for="pdfInput">
+          <input type="file" id="pdfInput" accept="application/pdf,.pdf">
+          <div>
+            <div class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 15V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 9l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="upload-title">Drop PDF here</div>
+            <div class="upload-copy">or browse your device. Maximum file size: 15 MB.</div>
+            <span class="pick-btn">Choose PDF</span>
+          </div>
+        </label>
+
+        <div class="field-err" id="errMsg"></div>
+        <div class="filechip" id="fileChip">
+          <div class="chip-main">
+            <div class="chip-name" id="chipName"></div>
+            <div class="chip-size" id="chipSize"></div>
+          </div>
+          <button type="button" class="remove-btn" id="removeBtn">Remove</button>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="verifyBtn" disabled>Verify document</button>
+        <div class="spinner" id="spinner"></div>
+
+        <div class="result-banner" id="resultBanner">
+          <div class="result-head">
+            <span class="result-icon" id="resultIcon"></span>
+            <span id="resultTitle"></span>
+          </div>
+          <div class="result-msg" id="resultMessage"></div>
+          <div class="result-detail" id="resultDetail"></div>
+        </div>
+      </form>
+
+      <div class="note">
+        <strong>Simple verification:</strong> DocSign re-hashes the uploaded PDF and compares it with the fingerprint stored in this certificate.
+      </div>
+
+      <div class="actions">
+        <a href="{% url 'upload_pdf' %}" class="text-link">Sign another PDF</a>
+        <a href="{% url 'verify_pdf' %}" class="text-link">Verify another certificate</a>
+      </div>
+    </section>
+  </section>
+</main>
+
+<script>
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeBtn');
+  const moonIcon = '<svg viewBox="0 0 24 24" fill="none"><path d="M20 15.6A8.3 8.3 0 0 1 8.4 4 8.7 8.7 0 1 0 20 15.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  const sunIcon = '<svg viewBox="0 0 24 24" fill="none"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2M12 19.5v2M4.5 4.5l1.4 1.4M18.1 18.1l1.4 1.4M2.5 12h2M19.5 12h2M4.5 19.5l1.4-1.4M18.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  function setTheme(t){root.dataset.theme=t;themeBtn.innerHTML=t==='light'?moonIcon:sunIcon;localStorage.theme=t}
+  setTheme(localStorage.theme || 'light');
+  themeBtn.addEventListener('click',()=>setTheme(root.dataset.theme==='light'?'dark':'light'));
+
+  const VERIFY_URL = "{{ verify_url }}";
+  const MAX = 15 * 1024 * 1024;
+  const inp = document.getElementById('pdfInput');
+  const dz = document.getElementById('dropZone');
+  const chip = document.getElementById('fileChip');
+  const chipName = document.getElementById('chipName');
+  const chipSize = document.getElementById('chipSize');
+  const removeBtn = document.getElementById('removeBtn');
+  const err = document.getElementById('errMsg');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const spinner = document.getElementById('spinner');
+  const banner = document.getElementById('resultBanner');
+
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('over');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    inp.files = dt.files;
+    handleFile(file);
+  });
+  inp.addEventListener('change', () => handleFile(inp.files[0]));
+  removeBtn.addEventListener('click', clearFile);
+  verifyBtn.addEventListener('click', verifyDocument);
+
+  function handleFile(file){
+    if(!file) return;
+    if(!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') return showError('Only PDF files are accepted.');
+    if(file.size > MAX) return showError('File exceeds the 15 MB limit.');
+    err.classList.remove('show'); err.textContent = '';
+    banner.className = 'result-banner';
+    chipName.textContent = file.name;
+    chipSize.textContent = formatSize(file.size);
+    chip.classList.add('show');
+    verifyBtn.disabled = false;
+  }
+  function clearFile(){
+    inp.value = '';
+    chip.classList.remove('show');
+    verifyBtn.disabled = true;
+    err.classList.remove('show');
+    banner.className = 'result-banner';
+  }
+  function showError(message){
+    inp.value = '';
+    chip.classList.remove('show');
+    verifyBtn.disabled = true;
+    err.textContent = message;
+    err.classList.add('show');
+  }
+  async function verifyDocument(){
+    if(!inp.files.length) return;
+    verifyBtn.disabled = true;
+    spinner.style.display = 'block';
+    banner.className = 'result-banner';
+    const fd = new FormData();
+    fd.append('pdf', inp.files[0]);
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    try{
+      const res = await fetch(VERIFY_URL, { method:'POST', body:fd, headers: csrf ? {'X-CSRFToken': csrf} : {} });
+      const data = await res.json();
+      renderResult(data);
+    }catch(error){
+      renderResult({status:'unknown', message:'Verification could not be completed. Please try again.'});
+    }finally{
+      spinner.style.display = 'none';
+      verifyBtn.disabled = false;
+    }
+  }
+  function renderResult(data){
+    const status = ['valid','modified','unknown'].includes(data.status) ? data.status : 'unknown';
+    const title = status === 'valid' ? 'Document is authentic' : status === 'modified' ? 'Document has been changed' : 'Verification could not be completed';
+    const icon = status === 'valid'
+      ? '<svg viewBox="0 0 24 24" fill="none"><path d="m6 12.2 3.4 3.4L18 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : status === 'modified'
+        ? '<svg viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M12 17.5h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M10.4 4.4 2.8 18a1.5 1.5 0 0 0 1.3 2.2h15.8a1.5 1.5 0 0 0 1.3-2.2L13.6 4.4a1.8 1.8 0 0 0-3.2 0Z" stroke="currentColor" stroke-width="1.8"/></svg>';
+    banner.className = 'result-banner ' + status;
+    document.getElementById('resultIcon').innerHTML = icon;
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultMessage').textContent = data.message || 'No message returned from the server.';
+    const detail = [];
+    if(data.uploaded_hash) detail.push('Uploaded: ' + data.uploaded_hash);
+    if(data.stored_hash) detail.push('Certificate: ' + data.stored_hash);
+    const detailBox = document.getElementById('resultDetail');
+    detailBox.textContent = detail.join('\n');
+    detailBox.style.display = detail.length ? 'block' : 'none';
+    banner.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+  function formatSize(bytes){
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1048576).toFixed(2) + ' MB';
+  }
+</script>
+</body>
+</html>
