@@ -14,10 +14,9 @@ class DigitalDocumentAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
-        'title',
-        'file_hash',
-        'signature',
-    ]
+    'title',
+    'file_hash',
+]
 
     list_filter = [
         'status',
@@ -25,10 +24,9 @@ class DigitalDocumentAdmin(admin.ModelAdmin):
     ]
 
     readonly_fields = [
-        'file_hash',
-        'signature',
-        'public_key',
-        'private_key',
-        'created_at',
-        'updated_at',
-    ]
+    'file_hash',
+    'signature',
+    'public_key',
+    'created_at',
+    'updated_at',
+]
